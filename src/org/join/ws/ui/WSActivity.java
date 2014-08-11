@@ -241,12 +241,14 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     public void onClick(View v) {
         boolean isChecked = toggleBtn.isChecked();
         if (isChecked) {
+            // 取消验证本地网络
+            /*
             if (!isWebServAvailable()) {
                 toggleBtn.setChecked(false);
                 urlText.setText("");
                 showDialog(DLG_SERV_USELESS);
                 return;
-            }
+            }*/
             doStartClick();
         } else {
             doStopClick();

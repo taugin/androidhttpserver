@@ -21,6 +21,7 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StatFs;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -101,8 +102,8 @@ public class CommonUtil {
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
                         .hasMoreElements();) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
-                    // 非回传地址时返回
-                    if (!inetAddress.isLoopbackAddress()) {
+                    // 非回传地址时返回 并且非 link-local address
+                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
                         return inetAddress.getHostAddress().toString();
                     }
                 }
@@ -120,6 +121,19 @@ public class CommonUtil {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
+    public String getGameDir() {
+        File externalDir = Environment.getExternalStorageDirectory();
+        if (externalDir != null) {
+            String gameDir = externalDir.getAbsolutePath() + "/" + "Games";
+            File gameFile = new File(gameDir);
+            if (!gameFile.exists()) {
+                gameFile.mkdirs();
+            }
+            Log.d("taugin", "gameDir = " + gameDir);
+            return gameDir;
+        }
+        return null;
+    }
     /**
      * @brief 获取文件系统路径内的可用空间，单位bytes
      * @param path 文件系统路径
