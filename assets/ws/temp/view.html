@@ -40,7 +40,7 @@
                     <td class="detailsColumn">{{ row.size }}</td>
                     <td class="detailsColumn">{{ row.time }}</td>
                     <td class="operateColumn">
-                        {% if row.can_download %}<a class="download btn small" href="javascript:void(0);">{% rstr v_download %}</a>{% endif %}
+                        {% if row.can_download %}<a class="download btn small" href="{% if row.can_browse %}{{ row.link }}{% else %}javascript:void(0);{% endif %}">{% rstr v_download %}</a>{% endif %}
                         {% if row.can_delete %}<a class="delete btn small" href="javascript:void(0);">{% rstr v_delete %}</a>{% endif %}
                         {% if row.can_upload %}
                         <a class="upload btn small fbtn" href="javascript:void(0);">{% rstr v_upload %}<input id="{% uuid %}" type="file" name="{{ row.name }}"></a>
