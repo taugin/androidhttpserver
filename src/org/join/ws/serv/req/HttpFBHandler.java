@@ -21,6 +21,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.join.ws.Constants.Config;
 import org.join.ws.serv.req.objs.FileRow;
+import org.join.ws.serv.req.objs.TwoColumn;
 import org.join.ws.serv.support.Progress;
 import org.join.ws.serv.view.ViewFactory;
 import org.join.ws.util.CommonUtil;
@@ -95,7 +96,7 @@ public class HttpFBHandler implements HttpRequestHandler {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dirpath", dir.getPath()); // 目录路径
         data.put("hasParent", !isSamePath(dir.getPath(), this.webRoot)); // 是否有上级目录
-        data.put("fileRows", buildFileRows(dir)); // 文件行信息集合
+        data.put("twoColumns", buildTwoColumn(dir)); // 文件行信息集合
         return mViewFactory.renderTemp(request, "view.html", data);
     }
 
@@ -110,6 +111,27 @@ public class HttpFBHandler implements HttpRequestHandler {
         return true;
     }
 
+    private List<TwoColumn> buildTwoColumn(File dir) {
+        List<FileRow> fileRows = buildFileRows(dir);
+        if (fileRows == null) {
+            return null;
+        }
+        int index = 0;
+        int len = fileRows.size();
+        List<TwoColumn> twoColumns = new ArrayList<TwoColumn>();
+        TwoColumn twoColumn = null;
+        for (index = 0; index < len; index+=2) {
+            twoColumn = new TwoColumn();
+            if (index < len) {
+                twoColumn.fileRow1 = fileRows.get(index);
+            }
+            if (index + 1 < len) {
+                twoColumn.fileRow2 = fileRows.get(index + 1);
+            }
+            twoColumns.add(twoColumn);
+        }
+        return twoColumns;
+    }
     private List<FileRow> buildFileRows(File dir) {
         File[] files = dir.listFiles(); // 目录列表
         if (files != null) {
