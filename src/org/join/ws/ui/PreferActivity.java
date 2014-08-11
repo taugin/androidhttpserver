@@ -11,6 +11,7 @@ import org.join.ws.Constants.Config;
 import org.join.ws.WSApplication;
 import org.join.ws.ui.widget.FileBrowser;
 import org.join.ws.ui.widget.ProgressBarPreference;
+import org.join.ws.util.CommonUtil;
 import org.join.ws.util.CopyUtil;
 
 import android.app.AlertDialog;
@@ -108,7 +109,7 @@ public class PreferActivity extends PreferenceActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(WSApplication
                 .getInstance());
         Config.PORT = sp.getInt(KEY_SERV_PORT, 7766);
-        Config.WEBROOT = sp.getString(KEY_SERV_ROOT, "/");
+        Config.WEBROOT = sp.getString(KEY_SERV_ROOT, CommonUtil.getSingleton().getGameDir());
         Config.ALLOW_DOWNLOAD = sp.getBoolean(KEY_ALLOW_DOWNLOAD, true);
         Config.ALLOW_DELETE = sp.getBoolean(KEY_ALLOW_DELETE, true);
         Config.ALLOW_UPLOAD = sp.getBoolean(KEY_ALLOW_UPLOAD, true);
@@ -120,7 +121,7 @@ public class PreferActivity extends PreferenceActivity {
         if (key.equals(KEY_SERV_PORT)) {
             Config.PORT = sp.getInt(KEY_SERV_PORT, 7766);
         } else if (key.equals(KEY_SERV_ROOT)) {
-            Config.WEBROOT = sp.getString(KEY_SERV_ROOT, "/");
+            Config.WEBROOT = sp.getString(KEY_SERV_ROOT, CommonUtil.getSingleton().getGameDir());
         } else if (key.equals(KEY_ALLOW_DOWNLOAD)) {
             Config.ALLOW_DOWNLOAD = sp.getBoolean(KEY_ALLOW_DOWNLOAD, true);
         } else if (key.equals(KEY_ALLOW_DELETE)) {

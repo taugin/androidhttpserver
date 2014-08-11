@@ -129,10 +129,9 @@ public class CommonUtil {
             if (!gameFile.exists()) {
                 gameFile.mkdirs();
             }
-            Log.d("taugin", "gameDir = " + gameDir);
             return gameDir;
         }
-        return null;
+        return "/";
     }
     /**
      * @brief 获取文件系统路径内的可用空间，单位bytes
