@@ -22,10 +22,10 @@
         {% if twoColumns %}
             {% for col in twoColumns %}
                 <tr width="100%">
-				{{% if col.fileRow2 %}}
+				{% if col.fileRow1 %}
 					<td>
 						<table width="300px" align="left">
-							<tr><td align="left"><a class="{{ col.fileRow1.clazz }}" href="{% if col.fileRow1.can_browse %}{{ col.fileRow1.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow1.name }}</a></td></tr>
+							<tr><td align="left"><a href="{% if col.fileRow1.can_browse %}{{ col.fileRow1.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow1.name }}</a></td></tr>
 							<tr><td align="left" width="300px">{{ col.fileRow1.time }}</td></tr>
 							<tr class="operateColumn">
 								<td align="left" width="50%">{% rstr v_size %} : {{ col.fileRow1.size }}</td>
@@ -33,11 +33,11 @@
 							</tr>
 						</table>
 					</td>
-					{{% endif %}}
-					{{% if col.fileRow2 %}}
+				{% endif %}
+				{% if col.fileRow2 %}
 					<td >
 						<table width="300px" align="left">
-							<tr><td align="left"><a class="{{ col.fileRow2.clazz }}" href="{% if col.fileRow2.can_browse %}{{ col.fileRow2.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow2.name }}</a></td></tr>
+							<tr><td align="left"><a href="{% if col.fileRow2.can_browse %}{{ col.fileRow2.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow2.name }}</a></td></tr>
 							<tr><td align="left" width="300px">{{ col.fileRow2.time }}</td></tr>
 							<tr class="operateColumn">
 								<td align="left" width="50%">{% rstr v_size %} : {{ col.fileRow2.size }}</td>
@@ -45,7 +45,7 @@
 							</tr>
 						</table>
 					</td>
-					{{% endif %}}
+				{% endif %}
                 </tr>
             {% endfor %}
         {% endif %}
