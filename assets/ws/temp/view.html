@@ -3,6 +3,8 @@
 
 {% block style %}
     <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/wsf.view.css">
+	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/colorbox.css">
+	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/style.css">
     <script>
         var MSG = {
             'tip': '{% rstr v_tip %}',
@@ -17,42 +19,40 @@
 {% block body %}
     {% include "confirm.html" %}
     <p>&nbsp;</p>
-    <h1 id="header">{{ dirpath }} {% rstr v_path %}</h1>
-    <table id="table" border="1">
+        <div >
+            <h4>coco合作游戏</h4>
+        </div>
+        <div class="fl homegame">
         {% if twoColumns %}
             {% for col in twoColumns %}
-                <tr width="100%">
 				{% if col.fileRow1 %}
-					<td>
-						<table width="300px" align="left">
-							<tr><td align="left"><a href="{% if col.fileRow1.can_browse %}{{ col.fileRow1.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow1.name }}</a></td></tr>
-							<tr><td align="left" width="300px">{{ col.fileRow1.time }}</td></tr>
-							<tr class="operateColumn">
-								<td align="left" width="50%">{% rstr v_size %} : {{ col.fileRow1.size }}</td>
-								<td align="center" width="50%"> {% if col.fileRow1.can_download %}<a class="download btn small" href="{% if col.fileRow1.can_browse %}{{ col.fileRow1.link }}{% else %}javascript:void(0);{% endif %}">{% rstr v_download %}</a>{% endif %}</td>
-							</tr>
-						</table>
-					</td>
+					<div class="gamecell gctop">
+						<div class="gamesingle gmtopleft">
+							<!--a target='_blank' href="http://www.coco.cn/users/game/389011948" class="gmicon fl"><img src="http://img.ucenter.appget.cn/download?v=1&f=MyGroup/M00/00/14/CgoMRlN_78OAY39WAAGX80jzarA7028538" alt="" /></a-->
+							<div class="gmdes fl">
+								<h6><a target='_blank' href="{{ col.fileRow1.link }}">{{ col.fileRow1.name }}</a></h6>
+								<p>集合众多日系手游要素的经典RPG手游</p>
+								<div><a href="{{ col.fileRow1.link }}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.fileRow1.size }}</div>
+							</div>
+						</div>
+					</div>
 				{% endif %}
 				{% if col.fileRow2 %}
-					<td >
-						<table width="300px" align="left">
-							<tr><td align="left"><a href="{% if col.fileRow2.can_browse %}{{ col.fileRow2.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow2.name }}</a></td></tr>
-							<tr><td align="left" width="300px">{{ col.fileRow2.time }}</td></tr>
-							<tr class="operateColumn">
-								<td align="left" width="50%">{% rstr v_size %} : {{ col.fileRow2.size }}</td>
-								<td align="center" width="50%">{% if col.fileRow2.can_download %}<a class="download btn small" href="{% if col.fileRow2.can_browse %}{{ col.fileRow2.link }}{% else %}javascript:void(0);{% endif %}">{% rstr v_download %}</a>{% endif %}</td>
-							</tr>
-						</table>
-					</td>
+					<div class="gamecell gctop">
+						<div class="gamesingle gmtopleft">
+							<!--a target='_blank' href="http://www.coco.cn/users/game/389011948" class="gmicon fl"><img src="http://img.ucenter.appget.cn/download?v=1&f=MyGroup/M00/00/14/CgoMRlN_78OAY39WAAGX80jzarA7028538" alt="" /></a-->
+							<div class="gmdes fl">
+								<h6><a target='_blank' href="col.fileRow2.link">{{ col.fileRow2.name }}</a></h6>
+								<p>集合众多日系手游要素的经典RPG手游</p>
+								<div><a href="{{col.fileRow2.link}}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.fileRow2.size }}</div>
+							</div>
+						</div>
+					</div>
 				{% endif %}
-                </tr>
+
             {% endfor %}
         {% endif %}
-    </table>
-    <hr noshade>
-    <em>{% rstr v_wel_to %} <a target="_blank" href="https://github.com/joinAero/AndroidWebServ/">AndroidWebServ Source</a>!</em>
-    <p>&nbsp;</p>
+		</div>
 {% endblock %}
 
 {% block script %}

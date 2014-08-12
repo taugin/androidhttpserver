@@ -18,35 +18,34 @@
     {% include "confirm.html" %}
     <p>&nbsp;</p>
     <h1 id="header">{{ dirpath }} {% rstr v_path %}</h1>
-    <table id="table">
-        <tr class="header">
-            <td>{% rstr v_name %}</td>
-            <td class="detailsColumn">{% rstr v_size %}</td>
-            <td class="detailsColumn">{% rstr v_modi %}</td>
-            <td class="detailsColumn">{% rstr v_oper %}</td>
-        </tr>
-        {% if hasParent %}
-        <tr>
-            <td><a class="icon up" href="..">[{% rstr v_parent %}]</a></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        {% endif %}
-        {% if fileRows %}
-            {% for row in fileRows %}
-                <tr>
-                    <td><a class="{{ row.clazz }}" href="{% if row.can_browse %}{{ row.link }}{% else %}javascript:void(0);{% endif %}">{{ row.name }}</a></td>
-                    <td class="detailsColumn">{{ row.size }}</td>
-                    <td class="detailsColumn">{{ row.time }}</td>
-                    <td class="operateColumn">
-                        {% if row.can_download %}<a class="download btn small" href="{% if row.can_browse %}{{ row.link }}{% else %}javascript:void(0);{% endif %}">{% rstr v_download %}</a>{% endif %}
-                        {% if row.can_delete %}<a class="delete btn small" href="javascript:void(0);">{% rstr v_delete %}</a>{% endif %}
-                        {% if row.can_upload %}
-                        <a class="upload btn small fbtn" href="javascript:void(0);">{% rstr v_upload %}<input id="{% uuid %}" type="file" name="{{ row.name }}"></a>
-                        <div class="meter animate" style="display:none;"><span style="width: 50%"><span></span></span></div>
-                        {% endif %}
-                    </td>
+    <table id="table" border="1">
+        {% if twoColumns %}
+            {% for col in twoColumns %}
+                <tr width="100%">
+				{% if col.fileRow1 %}
+					<td>
+						<table width="300px" align="left">
+							<tr><td align="left"><a href="{% if col.fileRow1.can_browse %}{{ col.fileRow1.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow1.name }}</a></td></tr>
+							<tr><td align="left" width="300px">{{ col.fileRow1.time }}</td></tr>
+							<tr class="operateColumn">
+								<td align="left" width="50%">{% rstr v_size %} : {{ col.fileRow1.size }}</td>
+								<td align="center" width="50%"> {% if col.fileRow1.can_download %}<a class="download btn small" href="{% if col.fileRow1.can_browse %}{{ col.fileRow1.link }}{% else %}javascript:void(0);{% endif %}">{% rstr v_download %}</a>{% endif %}</td>
+							</tr>
+						</table>
+					</td>
+				{% endif %}
+				{% if col.fileRow2 %}
+					<td >
+						<table width="300px" align="left">
+							<tr><td align="left"><a href="{% if col.fileRow2.can_browse %}{{ col.fileRow2.link }}{% else %}javascript:void(0);{% endif %}">{{ col.fileRow2.name }}</a></td></tr>
+							<tr><td align="left" width="300px">{{ col.fileRow2.time }}</td></tr>
+							<tr class="operateColumn">
+								<td align="left" width="50%">{% rstr v_size %} : {{ col.fileRow2.size }}</td>
+								<td align="center" width="50%">{% if col.fileRow2.can_download %}<a class="download btn small" href="{% if col.fileRow2.can_browse %}{{ col.fileRow2.link }}{% else %}javascript:void(0);{% endif %}">{% rstr v_download %}</a>{% endif %}</td>
+							</tr>
+						</table>
+					</td>
+				{% endif %}
                 </tr>
             {% endfor %}
         {% endif %}
