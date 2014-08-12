@@ -25,6 +25,8 @@ import org.join.ws.Constants.Config;
 import org.join.ws.serv.support.HttpGetParser;
 import org.join.ws.serv.view.ViewFactory;
 
+import android.util.Log;
+
 /**
  * @brief 下载请求处理
  * @author join

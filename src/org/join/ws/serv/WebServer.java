@@ -28,6 +28,8 @@ import org.join.ws.serv.req.HttpProgressHandler;
 import org.join.ws.serv.req.HttpUpHandler;
 import org.join.ws.util.CommonUtil;
 
+import android.util.Log;
+
 /**
  * @brief Web服务类
  * @author join

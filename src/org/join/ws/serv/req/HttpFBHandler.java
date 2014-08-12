@@ -26,6 +26,9 @@ import org.join.ws.serv.support.Progress;
 import org.join.ws.serv.view.ViewFactory;
 import org.join.ws.util.CommonUtil;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 /**
  * @brief 目录浏览页面请求处理
  * @author join
@@ -49,8 +52,20 @@ public class HttpFBHandler implements HttpRequestHandler {
         if (target.equals("/")) {
             file = new File(this.webRoot);
         } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot)) {
-            response.setStatusCode(HttpStatus.SC_FORBIDDEN);
-            response.setEntity(resp403(request));
+            //response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+            //response.setEntity(resp403(request));
+            response.setStatusCode(301);
+            String ip = mCommonUtil.getLocalIpAddress();
+            int port  = Config.PORT;
+            if (!TextUtils.isEmpty(ip)) {
+                ip = ip + ":" + port;
+            } else {
+                ip = "http://10.0.0.115:7766";
+            }
+            if (!ip.startsWith("http")) {
+                ip = "http://" + ip;
+            }
+            response.addHeader("Location", ip);
             return;
         } else {
             file = new File(target);

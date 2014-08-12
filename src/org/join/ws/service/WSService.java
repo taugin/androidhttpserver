@@ -8,6 +8,8 @@ import org.join.ws.receiver.StorageReceiver;
 import org.join.ws.receiver.WSReceiver;
 import org.join.ws.util.CommonUtil;
 
+import com.chukong.apwebauthentication.service.RedirectSwitch;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -97,4 +99,23 @@ public class WSService extends Service implements OnNetworkListener, OnStorageLi
         }
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            return super.onStartCommand(intent, flags, startId);
+        }
+        if ("org.join.service.WS".equals(intent.getAction())) {
+            final int op = intent.getIntExtra("op", -1);
+            new Thread(){
+                public void run() {
+                    if (op == 1) {
+                        RedirectSwitch.getInstance(getBaseContext()).openRedirectIfWifiApEnabled();
+                    } else if (op == 0) {
+                        RedirectSwitch.getInstance(getBaseContext()).closeRedirect();
+                    }
+                }
+            }.start();
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
 }

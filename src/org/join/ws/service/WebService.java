@@ -8,7 +8,9 @@ import org.join.ws.Constants.Config;
 import org.join.ws.serv.WebServer;
 import org.join.ws.serv.WebServer.OnWebServListener;
 import org.join.ws.ui.WebServActivity;
+import org.join.ws.util.CommonUtil;
 
+import com.chukong.apwebauthentication.dns.UDPSocketMonitor;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -44,6 +46,7 @@ public class WebService extends Service implements OnWebServListener {
 
     private int NOTI_SERV_RUNNING = R.string.noti_serv_running;
 
+    private UDPSocketMonitor uDPSocketMonitor;
     private LocalBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
@@ -60,6 +63,11 @@ public class WebService extends Service implements OnWebServListener {
                     String.format("create server: port=%d, root=%s", Config.PORT, Config.WEBROOT));
         webServer = new WebServer(Config.PORT, Config.WEBROOT);
         webServer.setOnWebServListener(this);
+
+        String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
+        Log.d("taugin", "localAddress = " + localAddress);
+        uDPSocketMonitor = new UDPSocketMonitor(localAddress, 7755);
+
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -73,6 +81,12 @@ public class WebService extends Service implements OnWebServListener {
         if (webServer != null) {
             webServer.setDaemon(true);
             webServer.start();
+            Intent intent = new Intent("org.join.service.WS");
+            intent.putExtra("op", 1);
+            startService(intent);
+        }
+        if (uDPSocketMonitor != null) {
+            uDPSocketMonitor.start();
         }
     }
 
@@ -86,6 +100,13 @@ public class WebService extends Service implements OnWebServListener {
         if (webServer != null) {
             webServer.close();
             webServer = null;
+            Intent intent = new Intent("org.join.service.WS");
+            intent.putExtra("op", 0);
+            startService(intent);
+        }
+        if (uDPSocketMonitor != null) {
+            uDPSocketMonitor.close();
+            uDPSocketMonitor = null;
         }
     }
 
