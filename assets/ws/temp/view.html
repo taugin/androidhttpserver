@@ -24,36 +24,21 @@
         </div>
         <!--div class="fl homegame"-->
 		<div class="fl homegame">
-        {% if twoColumns %}
-            {% for col in twoColumns %}
-				{% if col.fileRow1 %}
-				<!--div class="gamecell gctop"--><!-- 取消两列显示 -->
+        {% if fileRows %}
+            {% for col in fileRows %}
+				{% if col %}
 					<div class="gctop">
 						<div class="gamesingle gmtopleft">
 							<!--img src="http://img.ucenter.appget.cn/download?v=1&f=MyGroup/M00/00/14/CgoMRlN_78OAY39WAAGX80jzarA7028538" alt="" class="gmicon fl"/-->
-							{% if col.fileRow2.icon %}<a class="gmicon fl"><img src="data:image/png;base64,{{col.fileRow1.icon}}" alt="" /></a>{% endif%}
+							<a class="gmicon fl"><img src="data:image/png;base64,{{col.icon}}" alt="" /></a>
 							<div class="gmdes fl">
-								<h6><a href="{{ col.fileRow1.link }}">{{ col.fileRow1.name }}</a></h6>
+								<h6><a href="{{ col.link }}">{{ col.name }}</a></h6>
 								<p>集合众多日系手游要素的经典RPG手游</p>
-								<div><a href="{{ col.fileRow1.link }}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.fileRow1.size }}</div>
+								<div><a href="{{ col.link }}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.size }}</div>
 							</div>
 						</div>
 					</div>
 				{% endif %}
-				{% if col.fileRow2 %}
-				<!--div class="gamecell gctop"--><!-- 取消两列显示 -->
-					<div class="gctop">
-						<div class="gamesingle gmtopleft">
-							{% if col.fileRow2.icon %}<a class="gmicon fl"><img src="data:image/png;base64,{{col.fileRow2.icon}}" alt="" /></a>{% endif%}
-							<div class="gmdes fl">
-								<h6><a href={{ col.fileRow2.link }}>{{ col.fileRow2.name }}</a></h6>
-								<p>集合众多日系手游要素的经典RPG手游</p>
-								<div><a href="{{col.fileRow2.link}}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.fileRow2.size }}</div>
-							</div>
-						</div>
-					</div>
-				{% endif %}
-
             {% endfor %}
         {% endif %}
 		</div>
