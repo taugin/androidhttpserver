@@ -20,14 +20,21 @@ import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.join.ws.Constants.Config;
+import org.join.ws.WSApplication;
 import org.join.ws.serv.req.objs.FileRow;
 import org.join.ws.serv.req.objs.TwoColumn;
 import org.join.ws.serv.support.Progress;
 import org.join.ws.serv.view.ViewFactory;
 import org.join.ws.util.CommonUtil;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.chukong.apwebauthentication.util.Log;
 
 /**
  * @brief 目录浏览页面请求处理
@@ -174,6 +181,12 @@ public class HttpFBHandler implements HttpRequestHandler {
             clazz = "icon file";
             name = f.getName();
             link = f.getPath();
+            if (name != null && name.endsWith(".apk")) {
+                String label = getApkName(link);
+                if (label != null) {
+                    name = label;
+                }
+            }
             size = mCommonUtil.readableFileSize(f.length());
         }
         FileRow row = new FileRow(clazz, name, link, size);
@@ -195,6 +208,26 @@ public class HttpFBHandler implements HttpRequestHandler {
         return row;
     }
 
+    private String getApkName(String apkFile) {
+        Context context = WSApplication.getInstance().getBaseContext();
+        PackageManager pm = context.getPackageManager();
+        if (pm == null) {
+            return null;
+        }
+        PackageInfo info = pm.getPackageArchiveInfo(apkFile, PackageManager.GET_ACTIVITIES);
+        ApplicationInfo appInfo = null;
+        if (info != null) {
+            appInfo = info.applicationInfo;
+            if (appInfo != null) {
+                appInfo.publicSourceDir = apkFile;
+                CharSequence label = appInfo.loadLabel(pm);
+                if (label != null) {
+                    return label.toString();
+                }
+            }
+        }
+        return null;
+    }
     private boolean hasWsDir(File f) {
         return HttpDelHandler.hasWsDir(f);
     }
