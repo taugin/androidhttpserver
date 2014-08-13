@@ -10,7 +10,7 @@ q:before,q:after {content:''}
 abbr,acronym {border:0}
 
 /* ¶¨Î» */
-.fl {float:left;display:inline}
+.fl {/*float:left;*/display:inline}
 .fr {float:right;display:inline}
 .cb {clear:both}
 .cl {clear:left}
@@ -144,7 +144,7 @@ input[type='checkbox']:active:checked::before{
 
 
 /* Global Base CSS */
-html, body {font:12px "Lucida Grande",Geneva,Arial,Verdana,"Tahoma", "Arial", "Î¢ÈíÑÅºÚ", "ºÚÌå", "ËÎÌå";min-width:1000px}
+html, body {font:12px "Lucida Grande",Geneva,Arial,Verdana,"Tahoma", "Arial", "Î¢ÈíÑÅºÚ", "ºÚÌå", "ËÎÌå";align=center}
 body {padding-bottom:55px;position:relative;background: url(../img/middle-bg.jpg) repeat;}
 .wrap {width:1000px;margin:0 auto;position:relative}
 a {text-decoration:none}
@@ -313,7 +313,7 @@ a.arrow_head:hover{color: #FFF;}
 
 .navnext {position:relative;clear:both;background:url(../img/homemidsep.jpg) no-repeat;height:78px;padding-top:66px}
 
-.homegame {width:754px;padding-left:2px;min-height:200px}
+.homegame {/*width:754px;*/padding-left:2px;min-height:200px;margin-left:auto;margin-right:auto}
 .homeside {width:242px;margin-left:1px}
 
 .gamecell {float:left;width:376px;height:155px;border-right:1px solid #f1f1f1;border-bottom:1px solid #f1f1f1}

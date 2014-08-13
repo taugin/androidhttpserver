@@ -1,5 +1,6 @@
 package org.join.ws.serv.req;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -19,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+import org.join.web.serv.R;
 import org.join.ws.Constants.Config;
 import org.join.ws.WSApplication;
 import org.join.ws.serv.req.objs.FileRow;
@@ -27,11 +29,16 @@ import org.join.ws.serv.support.Progress;
 import org.join.ws.serv.view.ViewFactory;
 import org.join.ws.util.CommonUtil;
 
-import android.app.ActivityManager;
+import se.unlogic.standardutils.crypto.Base64;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.chukong.apwebauthentication.util.Log;
@@ -171,7 +178,7 @@ public class HttpFBHandler implements HttpRequestHandler {
 
     private FileRow buildFileRow(File f) {
         boolean isDir = f.isDirectory();
-        String clazz, name, link, size;
+        String clazz, name, link, size, icon = null;
         if (isDir) {
             clazz = "icon dir";
             name = f.getName() + "/";
@@ -186,10 +193,11 @@ public class HttpFBHandler implements HttpRequestHandler {
                 if (label != null) {
                     name = label;
                 }
+                icon = getApkIcon(link);
             }
             size = mCommonUtil.readableFileSize(f.length());
         }
-        FileRow row = new FileRow(clazz, name, link, size);
+        FileRow row = new FileRow(clazz, name, link, size, icon);
         row.time = sdf.format(new Date(f.lastModified()));
         if (f.canRead()) {
             row.can_browse = true;
@@ -223,6 +231,37 @@ public class HttpFBHandler implements HttpRequestHandler {
                 CharSequence label = appInfo.loadLabel(pm);
                 if (label != null) {
                     return label.toString();
+                }
+            }
+        }
+        return null;
+    }
+    private String getApkIcon(String apkFile) {
+        Context context = WSApplication.getInstance().getBaseContext();
+        PackageManager pm = context.getPackageManager();
+        if (pm == null) {
+            return null;
+        }
+        PackageInfo info = pm.getPackageArchiveInfo(apkFile, PackageManager.GET_ACTIVITIES);
+        ApplicationInfo appInfo = null;
+        if (info != null) {
+            appInfo = info.applicationInfo;
+            if (appInfo != null) {
+                appInfo.publicSourceDir = apkFile;
+                try {
+                    Drawable drawable = appInfo.loadIcon(pm);
+                    Bitmap bmp = null;
+                    if (drawable instanceof BitmapDrawable) {
+                        bmp = ((BitmapDrawable) drawable).getBitmap();
+                    } else {
+                        bmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_default);
+                    }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte iconbyte[] = baos.toByteArray();
+                    return Base64.encodeBytes(iconbyte);
+                } catch(Exception e) {
+                    Log.d(Log.TAG, "e = " + e);
                 }
             }
         }
