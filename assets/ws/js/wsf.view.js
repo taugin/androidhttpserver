@@ -10,7 +10,7 @@ function getName( $operate ) {
 // directly download
 $( 'a.download' ).click(function() {
     var $this = $( this );
-    window.location.href = '/dodownload?fname=' + getName( $this );
+    window.location.href = '/dodownload?fname=' + $this.href;
 });
 
 //confirm delete

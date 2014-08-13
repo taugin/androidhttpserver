@@ -25,7 +25,8 @@ import org.join.ws.Constants.Config;
 import org.join.ws.serv.support.HttpGetParser;
 import org.join.ws.serv.view.ViewFactory;
 
-import android.util.Log;
+import com.chukong.apwebauthentication.util.Log;
+
 
 /**
  * @brief 下载请求处理
@@ -45,6 +46,7 @@ public class HttpDownHandler implements HttpRequestHandler {
     @Override
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
+        Log.d(Log.TAG, request.getRequestLine().toString() + " , ALLOW_DOWNLOAD = " + Config.ALLOW_DOWNLOAD);
         if (!Config.ALLOW_DOWNLOAD) {
             response.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
             response.setEntity(ViewFactory.getSingleton().renderTemp(request, "503.html"));
@@ -53,14 +55,17 @@ public class HttpDownHandler implements HttpRequestHandler {
         HttpGetParser parser = new HttpGetParser();
         Map<String, String> params = parser.parse(request);
         String fname = params.get("fname");
-        Header referer = request.getFirstHeader("Referer");
-        if (fname == null || referer == null) {
+        // No need to use referer
+        // Header referer = request.getFirstHeader("Referer");
+        if (fname == null/* || referer == null*/) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             return;
         }
         fname = URLDecoder.decode(fname, Config.ENCODING);
-        String refPath = new URL(URLDecoder.decode(referer.getValue(), Config.ENCODING)).getPath();
-
+        Log.d(Log.TAG, "fname = " + fname);
+        //String refPath = new URL(URLDecoder.decode(referer.getValue(), Config.ENCODING)).getPath();
+        String refPath = fname;
+        Log.d(Log.TAG, "refpath = " + refPath);
         final File file;
         if (refPath.equals("/")) {
             file = new File(this.webRoot, fname);
@@ -69,7 +74,8 @@ public class HttpDownHandler implements HttpRequestHandler {
             response.setEntity(ViewFactory.getSingleton().renderTemp(request, "403.html"));
             return;
         } else {
-            file = new File(refPath, fname);
+            //file = new File(refPath, fname);
+            file = new File(refPath);
         }
 
         final String encoding = isGBKAccepted(request) ? "GBK" : Config.ENCODING;
@@ -78,6 +84,7 @@ public class HttpDownHandler implements HttpRequestHandler {
             @Override
             public void writeTo(OutputStream outstream) throws IOException {
                 if (file.isFile()) {
+                    Log.d(Log.TAG, "file = " + file);
                     write(file, outstream);
                 } else {
                     zip(file, outstream, encoding);

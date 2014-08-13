@@ -64,7 +64,7 @@ public class HttpFBHandler implements HttpRequestHandler {
             throws HttpException, IOException {
         String target = URLDecoder.decode(request.getRequestLine().getUri(), Config.ENCODING);
         Header requestHost = request.getFirstHeader("Host");
-        Log.d(Log.TAG, "requestHost = " + (requestHost != null ? requestHost.getValue() : "null"));
+        Log.d(Log.TAG, "requestHost = " + (requestHost != null ? requestHost.getValue() : "null") + " , target = " + target);
 
         String requestMethod = null;
         RequestLine requestLine = request.getRequestLine();
