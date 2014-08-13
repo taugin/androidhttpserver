@@ -13,11 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.RequestLine;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.join.web.serv.R;
@@ -30,7 +32,6 @@ import org.join.ws.serv.view.ViewFactory;
 import org.join.ws.util.CommonUtil;
 
 import se.unlogic.standardutils.crypto.Base64;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -62,24 +63,38 @@ public class HttpFBHandler implements HttpRequestHandler {
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
         String target = URLDecoder.decode(request.getRequestLine().getUri(), Config.ENCODING);
+        Header requestHost = request.getFirstHeader("Host");
+        Log.d(Log.TAG, "requestHost = " + (requestHost != null ? requestHost.getValue() : "null"));
+
+        String requestMethod = null;
+        RequestLine requestLine = request.getRequestLine();
+        if (requestLine != null) {
+            requestMethod = requestLine.getMethod();
+        }
         File file;
-        if (target.equals("/")) {
+        if (target.equals("/view.html")) {
             file = new File(this.webRoot);
         } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot)) {
-            //response.setStatusCode(HttpStatus.SC_FORBIDDEN);
-            //response.setEntity(resp403(request));
-            response.setStatusCode(301);
             String ip = mCommonUtil.getLocalIpAddress();
-            int port  = Config.PORT;
-            if (!TextUtils.isEmpty(ip)) {
-                ip = ip + ":" + port;
+            String localHost = ip + ":7766";
+            Log.d(Log.TAG, "localHost = " + (localHost) + " , requestMethod = " + requestMethod);
+            if ((localHost != null && localHost.equals(requestHost)) || (requestMethod != null && requestMethod.equalsIgnoreCase("POST"))) {
+                response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+                response.setEntity(resp403(request));
             } else {
-                ip = "http://10.0.0.115:7766";
+                response.setStatusCode(301);
+                int port  = Config.PORT;
+                if (!TextUtils.isEmpty(ip)) {
+                    ip = ip + ":" + port;
+                } else {
+                    ip = "http://10.0.0.115:7766";
+                }
+                if (!ip.startsWith("http")) {
+                    ip = "http://" + ip;
+                }
+                ip += "/view.html";
+                response.addHeader("Location", ip);
             }
-            if (!ip.startsWith("http")) {
-                ip = "http://" + ip;
-            }
-            response.addHeader("Location", ip);
             return;
         } else {
             file = new File(target);
