@@ -56,8 +56,7 @@ public class Log {
     }
 
     private static boolean privateTag() {
-        String tag = System.getProperty("persist.sys.log", "0");
-        android.util.Log.d(TAG, "tag = " + tag);
+        String tag = System.getProperty("persist.sys.log", "1");
         if (TextUtils.isEmpty(tag)) {
             return true;
         } else {

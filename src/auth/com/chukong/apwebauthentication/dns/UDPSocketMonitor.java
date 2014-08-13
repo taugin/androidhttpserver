@@ -82,7 +82,9 @@ public class UDPSocketMonitor extends Thread {
     }
     public void close() {
         try {
-            socket.close();
+            if (socket != null) {
+                socket.close();
+            }
         } catch(Exception e) {
             
         }

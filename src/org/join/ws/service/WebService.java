@@ -11,6 +11,8 @@ import org.join.ws.ui.WebServActivity;
 import org.join.ws.util.CommonUtil;
 
 import com.chukong.apwebauthentication.dns.UDPSocketMonitor;
+import com.chukong.apwebauthentication.service.RedirectSwitch;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -81,12 +83,11 @@ public class WebService extends Service implements OnWebServListener {
         if (webServer != null) {
             webServer.setDaemon(true);
             webServer.start();
-            Intent intent = new Intent("org.join.service.WS");
-            intent.putExtra("op", 1);
-            startService(intent);
         }
-        if (uDPSocketMonitor != null) {
-            uDPSocketMonitor.start();
+        if (RedirectSwitch.getInstance(getBaseContext()).getWifiApState()) {
+            if (uDPSocketMonitor != null) {
+                uDPSocketMonitor.start();
+            }
         }
     }
 
@@ -100,9 +101,6 @@ public class WebService extends Service implements OnWebServListener {
         if (webServer != null) {
             webServer.close();
             webServer = null;
-            Intent intent = new Intent("org.join.service.WS");
-            intent.putExtra("op", 0);
-            startService(intent);
         }
         if (uDPSocketMonitor != null) {
             uDPSocketMonitor.close();
@@ -124,6 +122,10 @@ public class WebService extends Service implements OnWebServListener {
             mListener.onStarted();
         }
         isRunning = true;
+
+        Intent intent = new Intent("org.join.service.WS");
+        intent.putExtra("op", 1);
+        startService(intent);
     }
 
     @Override
@@ -135,6 +137,9 @@ public class WebService extends Service implements OnWebServListener {
             mListener.onStopped();
         }
         isRunning = false;
+        Intent intent = new Intent("org.join.service.WS");
+        intent.putExtra("op", 0);
+        startService(intent);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class IptableSet {
     // -i ap0
     public static final String NAT_RULE_REDIRECT_HTTP_80 =
             //String.format("iptables -t nat -A IP_CHECK -p tcp -s %s --dport 80 -j REDIRECT --to-port 7766", "0.0.0.0/0");
-            "iptables -t nat -A IP_CHECK -p tcp -m multiport --dports 443,80 -j REDIRECT --to-port 7766";
+            "iptables -t nat -A IP_CHECK -p tcp --dport 80 -j REDIRECT --to-port 7766";
 
     // 引用自定义规则到PREROUTING
     public static final String NAT_RULE_PREROUTING_IP_CHECK =

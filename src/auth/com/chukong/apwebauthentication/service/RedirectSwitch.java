@@ -35,7 +35,7 @@ public class RedirectSwitch {
         return sRedirectSwitch;
     }
 
-    private boolean getWifiApState() {
+    public boolean getWifiApState() {
         boolean enabled = false;
         WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         try {

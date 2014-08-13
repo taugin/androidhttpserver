@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.join.ws.util.CommonUtil;
 import org.xbill.DNS.Record;
 import org.xbill.DNS.Section;
 import org.xbill.DNS.Type;
@@ -42,14 +43,7 @@ public class AnswerHandler {
         if (type == Type.ANY) {
             type = Type.A;
         }
-        String answer = "192.168.23.52";
-        if (type == Type.AAAA) {
-            try {
-                answer = Inet6Address.getByName("192.168.23.52").getHostAddress();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        }
+        String answer = CommonUtil.getSingleton().getLocalIpAddress();
         Log.d(Log.TAG, "type = " + type + " , answer = " + answer);
         if (answer != null) {
             try {
