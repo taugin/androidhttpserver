@@ -9,14 +9,21 @@ public class IptableSet {
             "iptables -t nat -F";
 
     public static final String NAT_RULES_CLEAR_IP_CHECK =
+            "iptables -t nat -F IP_CHECK";
+
+    public static final String NAT_RULES_CLEAR_IP_CHAIN =
             "iptables -t nat -X IP_CHECK";
 
     public static final String NAT_RULES_DELETE_IP_CHECK_CHAIN =
             "iptables -t nat -D PREROUTING -j IP_CHECK";
 
+    /*
     public static final String NAT_RULES_DELETE_REDIRECT =
             "iptables -t nat -D IP_CHECK 1";
 
+    public static final String NAT_RULE_DELETE_DNS =
+            "iptables -t nat -D IP_CHECK 2";
+    */
     // 自定义规则链
     public static final String NAT_RULE_CREATE_IP_CHECK_CHAIN =
             "iptables -t nat -N IP_CHECK";
@@ -37,16 +44,12 @@ public class IptableSet {
     
     public static final String NAT_RULE_DNS_REDIRECT =
             "iptables -t nat -A IP_CHECK -p udp --dport 53 -j REDIRECT --to-port 7755";
-    
-    public static final String NAT_RULE_DELETE_DNS =
-            "iptables -t nat -D IP_CHECK 2";
 
     public static String generateClearIpRule() {
         String script = "";
         script += IptableSet.NAT_RULES_DELETE_IP_CHECK_CHAIN + "\n";
-        script += IptableSet.NAT_RULE_DELETE_DNS + "\n";
-        script += IptableSet.NAT_RULES_DELETE_REDIRECT + "\n";
         script += IptableSet.NAT_RULES_CLEAR_IP_CHECK + "\n";
+        script += IptableSet.NAT_RULES_CLEAR_IP_CHAIN + "\n";
         return script;
     }
     public static String generateIpCheckRule(String ipAddrMask) {
@@ -80,7 +83,7 @@ public class IptableSet {
         //  -i ap0
         return String.format("iptables -t nat -A IP_CHECK -p tcp -s %s --dport 80 -j REDIRECT --to-port 7766", ipAddrMask);
     }
-    
+
     private static byte[] ipAddrToByte(String ipAddr) {
         byte[] ret = new byte[4];
         try {
