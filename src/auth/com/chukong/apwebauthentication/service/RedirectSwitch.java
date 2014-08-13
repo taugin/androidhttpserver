@@ -5,9 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.wifi.WifiManager;
-import android.util.Log;
+import com.chukong.apwebauthentication.util.Log;
 
 import com.chukong.apwebauthentication.util.CmdExecutor;
 import com.chukong.apwebauthentication.util.CommonUtil;
@@ -22,6 +21,7 @@ public class RedirectSwitch {
     public static final int WIFI_AP_STATE_FAILED = 14;
     public static final String WIFI_AP_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_AP_STATE_CHANGED";
     public static final String EXTRA_WIFI_AP_STATE = "wifi_state";
+    private boolean mRedirected = false;
     private Context mContext;
     private RedirectSwitch(Context context) {
         mContext = context;
@@ -74,7 +74,7 @@ public class RedirectSwitch {
             String addrMast = CommonUtil.pickIpAndMask(builder.toString(), addr);
             Log.d("taugin", "addrMast = " + addrMast);
             builder.delete(0, builder.length());
-            CmdExecutor.runScriptAsRoot(IptableSet.generateIpCheckRule(addrMast), builder);
+            mRedirected = CmdExecutor.runScriptAsRoot(IptableSet.generateIpCheckRule(addrMast), builder) == 0;
             Log.d("taugin", "builder = " + builder.toString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,12 +83,14 @@ public class RedirectSwitch {
     
     public void closeRedirect() {
         Log.d("taugin", "closeRedirect");
-        StringBuilder builder = new StringBuilder();
-        try {
-            CmdExecutor.runScriptAsRoot(IptableSet.generateClearIpRule(), builder);
-            Log.d("taugin", "builder = " + builder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mRedirected) {
+            StringBuilder builder = new StringBuilder();
+            try {
+                CmdExecutor.runScriptAsRoot(IptableSet.generateClearIpRule(), builder);
+                Log.d("taugin", "builder = " + builder.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -8,7 +8,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 
-import android.util.Log;
+import com.chukong.apwebauthentication.util.Log;
+
 
 /**
  * Authored by EagleDNS<a href="http://www.unlogic.se/projects/eagledns">
@@ -48,7 +49,7 @@ public class UDPSocketMonitor extends Thread {
     public void run() {
         threadPools = new ThreadPools();
         ExecutorService executorService = threadPools.getMainProcessExecutor();
-        Log.d("taugin1", "Starting UDP socket monitor on address "
+        Log.d(Log.TAG, "Starting UDP socket monitor on address "
                 + this.getAddressAndPort());
 
         while (true) {
@@ -62,16 +63,16 @@ public class UDPSocketMonitor extends Thread {
             } catch (SocketException e) {
 
                 // This is usally thrown on shutdown
-                Log.d("taugin1", "SocketException thrown from UDP socket on address "
+                Log.d(Log.TAG, "SocketException thrown from UDP socket on address "
                         + this.getAddressAndPort() + ", " + e);
                 break;
             } catch (IOException e) {
 
-                Log.d("taugin1", "IOException thrown by UDP socket on address "
+                Log.d(Log.TAG, "IOException thrown by UDP socket on address "
                         + this.getAddressAndPort() + ", " + e);
             }
         }
-        Log.d("taugin1", "UDP socket monitor on address " + getAddressAndPort()
+        Log.d(Log.TAG, "UDP socket monitor on address " + getAddressAndPort()
                 + " shutdown");
     }
 

@@ -24,7 +24,8 @@ public class IptableSet {
     // 将来自192.168.43.249：80的数据包重定向到本机的7766端口
     // -i ap0
     public static final String NAT_RULE_REDIRECT_HTTP_80 =
-            String.format("iptables -t nat -A IP_CHECK -p tcp -s %s --dport 80 -j REDIRECT --to-port 7766", "0.0.0.0/0");
+            //String.format("iptables -t nat -A IP_CHECK -p tcp -s %s --dport 80 -j REDIRECT --to-port 7766", "0.0.0.0/0");
+            "iptables -t nat -A IP_CHECK -p tcp -m multiport --dports 443,80 -j REDIRECT --to-port 7766";
 
     // 引用自定义规则到PREROUTING
     public static final String NAT_RULE_PREROUTING_IP_CHECK =
@@ -51,7 +52,7 @@ public class IptableSet {
     public static String generateIpCheckRule(String ipAddrMask) {
         String script = "";
         script += IptableSet.NAT_RULE_CREATE_IP_CHECK_CHAIN + "\n";
-        script += redirectHttp(ipAddrMask) + "\n";
+        script += NAT_RULE_REDIRECT_HTTP_80 + "\n";
         script += NAT_RULE_DNS_REDIRECT + "\n";
         script += IptableSet.NAT_RULE_PREROUTING_IP_CHECK + "\n";
         return script;

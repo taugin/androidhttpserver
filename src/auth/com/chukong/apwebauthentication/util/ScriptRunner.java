@@ -3,8 +3,6 @@ package com.chukong.apwebauthentication.util;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import android.util.Log;
-
 /** 
  * Internal thread used to execute scripts as root. 
  */  
@@ -37,7 +35,7 @@ public class ScriptRunner extends Thread {
             final OutputStreamWriter out = new OutputStreamWriter(
                     exec.getOutputStream());
             // Write the script to be executed
-            Log.d("taugin", "script = " + script);
+            Log.d(Log.TAG, "script = " + script);
             out.write(script);
             // Ensure that the last character is an "enter"
             if (!script.endsWith("\n"))
@@ -64,7 +62,7 @@ public class ScriptRunner extends Thread {
             // get the process exit code
             if (exec != null)
                 this.exitcode = exec.waitFor();
-            Log.d("taugin", "exitcode = " + exitcode);
+            Log.d(Log.TAG, "exitcode = " + exitcode);
         } catch (InterruptedException ex) {
             if (res != null)
                 res.append("\nOperation timed-out");
@@ -73,7 +71,7 @@ public class ScriptRunner extends Thread {
                 res.append("\n" + ex);
         } finally {
             destroy();
-            //Log.d("taugin", "finally res = " + (res != null ? res.toString() : ""));
+            //Log.d(Log.TAG, "finally res = " + (res != null ? res.toString() : ""));
         }
     }
 

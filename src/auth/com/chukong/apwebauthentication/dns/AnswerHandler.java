@@ -9,7 +9,7 @@ import org.xbill.DNS.Record;
 import org.xbill.DNS.Section;
 import org.xbill.DNS.Type;
 
-import android.util.Log;
+import com.chukong.apwebauthentication.util.Log;
 
 /**
  * @author yihua.huang@dianping.com <br>
@@ -50,16 +50,9 @@ public class AnswerHandler {
                 e.printStackTrace();
             }
         }
-        Log.d("taugin1", "type = " + type + " , answer = " + answer);
+        Log.d(Log.TAG, "type = " + type + " , answer = " + answer);
         if (answer != null) {
             try {
-                /*
-                Log.d("taugin1", "query = " + query);
-                Log.d("taugin1", "question.getDClass() = " + question.getDClass());
-                Log.d("taugin1", "question.getName() = " + question.getName());
-                Log.d("taugin1", "answer = " + answer);
-                Log.d("taugin1", "type = " + type);
-                */
                 response.getMessage().addRecord(question, Section.QUESTION);
                 RecordBuilder builder = new RecordBuilder();
                 builder.dclass(question.getDClass());
@@ -68,14 +61,11 @@ public class AnswerHandler {
                 builder.type(/*type*/1);
                 Record record = builder.toRecord();
                 response.getMessage().addRecord(record, Section.ANSWER);
-                //Log.d("taugin1", "answer\t" + Type.string(type) + "\t"
-                //            + DClass.string(question.getDClass()) + "\t"
-                //            + answer + "\n");
                 response.setHasRecord(true);
-                Log.d("taugin1", "res = " + response.getMessage().toString());
+                Log.d(Log.TAG, response.getMessage().toString());
                 return false;
             } catch (Exception e) {
-                Log.d("taugin1", "AnswerHandler handling exception " + e.getMessage());
+                Log.d(Log.TAG, "AnswerHandler handling exception " + e.getMessage());
                 e.printStackTrace();
             }
         }
