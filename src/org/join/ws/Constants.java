@@ -50,4 +50,8 @@ public final class Constants {
         public static final int BUFFER_LENGTH = 4096;
     }
 
+    public static final int OP_START_WEBSERVER = 0;
+    public static final int OP_STOP_WEBSERVER = 1;
+    public static final int OP_START_DNSSERVER = 2;
+    public static final int OP_STOP_DNSSERVER = 3;
 }

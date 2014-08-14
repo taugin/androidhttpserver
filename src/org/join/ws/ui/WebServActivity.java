@@ -3,6 +3,8 @@ package org.join.ws.ui;
 import org.join.ws.serv.WebServer.OnWebServListener;
 import org.join.ws.service.WebService;
 
+import com.chukong.apwebauthentication.util.Log;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -47,13 +49,16 @@ public abstract class WebServActivity extends Activity implements OnWebServListe
     }
 
     protected void doBindService() {
+        Log.d(Log.TAG, "isBound11111 = " + isBound);
         // Restore configs of port and root here.
         PreferActivity.restore(PreferActivity.KEY_SERV_PORT, PreferActivity.KEY_SERV_ROOT);
-        bindService(webServIntent, servConnection, BIND_AUTO_CREATE);
+        bindService(webServIntent, servConnection, 0);
+        Log.d(Log.TAG, "isBound22222 = " + isBound);
         isBound = true;
     }
 
     protected void doUnbindService() {
+        Log.d(Log.TAG, "isBound = " + isBound);
         if (isBound) {
             unbindService(servConnection);
             isBound = false;

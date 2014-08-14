@@ -10,6 +10,7 @@ import net.asfun.jangod.lib.tag.UUIDTag;
 import org.join.ws.Constants.Config;
 import org.join.ws.serv.TempCacheFilter;
 import org.join.ws.service.WSService;
+import org.join.ws.service.WebService;
 import org.join.ws.ui.PreferActivity;
 import org.join.ws.util.CopyUtil;
 
@@ -54,6 +55,7 @@ public class WSApplication extends Application {
      */
     public void startWsService() {
         startService(wsServIntent);
+        startService(new Intent(this, WebService.class));
     }
 
     /**
@@ -61,6 +63,7 @@ public class WSApplication extends Application {
      */
     public void stopWsService() {
         stopService(wsServIntent);
+        stopService(new Intent(this, WebService.class));
     }
 
     /**

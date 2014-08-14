@@ -1,6 +1,7 @@
 package org.join.ws.ui;
 
 import org.join.web.serv.R;
+import org.join.ws.Constants;
 import org.join.ws.Constants.Config;
 import org.join.ws.WSApplication;
 import org.join.ws.receiver.OnWsListener;
@@ -154,7 +155,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             if (isRunning) {
                 toggleBtn.setChecked(true);
                 setUrlText(ipAddr);
-                doBindService();
+                // doBindService();
             }
         }
     }
@@ -241,14 +242,20 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             return;
         }
         toggleBtn.setChecked(true);
-        toggleBtn.setEnabled(false);
-        doBindService();
+        //toggleBtn.setEnabled(false);
+        //doBindService();
+        Intent intent = new Intent(this, WebService.class);
+        intent.putExtra("op", Constants.OP_START_WEBSERVER);
+        startService(intent);
     }
 
     private void doStopClick() {
         toggleBtn.setChecked(false);
-        toggleBtn.setEnabled(false);
-        doUnbindService();
+        //toggleBtn.setEnabled(false);
+        //doUnbindService();
+        Intent intent = new Intent(this, WebService.class);
+        intent.putExtra("op", Constants.OP_STOP_WEBSERVER);
+        startService(intent);
         ipAddr = null;
     }
 
@@ -406,15 +413,15 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private void setRedirect(boolean redirect) {
         Log.d(Log.TAG, "CommonUtil.isRooted() = " + CommonUtil.isRooted());
         if (CommonUtil.isRooted()) {
-            boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect);
+            boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect) || true;
             toggleBtnRedirect.setChecked(result ? redirect : false);
             if (result && redirect) {
                 Intent intent = new Intent(this, WebService.class);
-                intent.putExtra("dns", 1);
+                intent.putExtra("op", Constants.OP_START_DNSSERVER);
                 startService(intent);
-            } else {
+            } else if (result && !redirect) {
                 Intent intent = new Intent(this, WebService.class);
-                intent.putExtra("dns", 0);
+                intent.putExtra("op", Constants.OP_START_DNSSERVER);
                 startService(intent);
             }
         }

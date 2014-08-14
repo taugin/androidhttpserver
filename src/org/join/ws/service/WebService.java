@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.join.web.serv.R;
+import org.join.ws.Constants;
 import org.join.ws.Constants.Config;
 import org.join.ws.serv.WebServer;
 import org.join.ws.serv.WebServer.OnWebServListener;
@@ -64,9 +65,6 @@ public class WebService extends Service implements OnWebServListener {
         if (DEBUG)
             Log.d(TAG,
                     String.format("create server: port=%d, root=%s", Config.PORT, Config.WEBROOT));
-        webServer = new WebServer(Config.PORT, Config.WEBROOT);
-        webServer.setOnWebServListener(this);
-
         String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
         Log.d("taugin", "localAddress = " + localAddress);
 
@@ -75,12 +73,15 @@ public class WebService extends Service implements OnWebServListener {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(Log.TAG, "intent = " + intent);
         openWebServer();
         return mBinder;
     }
 
     private void openWebServer() {
-        if (webServer != null) {
+        if (webServer == null) {
+            webServer = new WebServer(Config.PORT, Config.WEBROOT);
+            webServer.setOnWebServListener(this);
             webServer.setDaemon(true);
             webServer.start();
         }
@@ -88,6 +89,7 @@ public class WebService extends Service implements OnWebServListener {
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.d(Log.TAG, "intent = " + intent);
         closeWebServer();
         return super.onUnbind(intent);
     }
@@ -199,11 +201,15 @@ public class WebService extends Service implements OnWebServListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(Log.TAG, "WebService intent = " + intent);
         if (intent != null) {
-            int op = intent.getIntExtra("dns", 0);
-            if (op == 1) {
+            int op = intent.getIntExtra("op", -1);
+            if (op == Constants.OP_START_DNSSERVER) {
                 openDnsServer();
-            } else {
+            } else if (op == Constants.OP_STOP_DNSSERVER) {
                 closeDnsServer();
+            } else if (op == Constants.OP_START_WEBSERVER) {
+                openWebServer();
+            } else if (op == Constants.OP_STOP_WEBSERVER) {
+                closeWebServer();
             }
         }
         return super.onStartCommand(intent, flags, startId);
