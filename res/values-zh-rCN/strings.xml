@@ -3,8 +3,8 @@
 
     <string name="app_name">WebServ</string>
     <!-- Buttons -->
-    <string name="btn_start">开始</string>
-    <string name="btn_stop">停止</string>
+    <string name="btn_start">开启Web服务</string>
+    <string name="btn_stop">停止Web服务</string>
     <!-- Menus -->
     <string name="menu_scan_barcode">二维码扫描</string>
     <string name="menu_preferences">偏好设定</string>
@@ -87,5 +87,11 @@
     <string name="v_del_fail">删除失败</string>
     <string name="v_up_fail">上传失败</string>
     <string name="v_not_allow">功能不再被允许。</string>
+
+    <!-- Wifiap -->
+    <string name="btn_start_ap">开启WifiAp</string>
+    <string name="btn_stop_ap">关闭WifiAp</string>
+    <string name="btn_start_redirect">开启重定向</string>
+    <string name="btn_stop_redirect">关闭重定向</string>
 
 </resources>

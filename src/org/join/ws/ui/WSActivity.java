@@ -6,6 +6,7 @@ import org.join.ws.WSApplication;
 import org.join.ws.receiver.OnWsListener;
 import org.join.ws.receiver.WSReceiver;
 import org.join.ws.serv.WebServer;
+import org.join.ws.service.WebService;
 import org.join.ws.util.CommonUtil;
 
 import android.app.AlertDialog;
@@ -15,21 +16,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.ClipboardManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.chukong.apwebauthentication.receiver.OnWifiApStateChangeListener;
+import com.chukong.apwebauthentication.receiver.WifiApStateReceiver;
+import com.chukong.apwebauthentication.service.RedirectSwitch;
+import com.chukong.apwebauthentication.util.Log;
+import com.chukong.apwebauthentication.wifiap.WifiApManager;
 
 /**
  * @brief 主活动界面
@@ -37,7 +43,7 @@ import android.widget.ToggleButton;
  * @author join
  */
 @SuppressWarnings("deprecation")
-public class WSActivity extends WebServActivity implements OnClickListener, OnWsListener {
+public class WSActivity extends WebServActivity implements OnClickListener, OnWsListener, OnWifiApStateChangeListener {
 
     static final String TAG = "WSActivity";
     static final boolean DEBUG = false || Config.DEV_MODE;
@@ -45,6 +51,8 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private CommonUtil mCommonUtil;
 
     private ToggleButton toggleBtn;
+    private ToggleButton toggleBtnAp;
+    private ToggleButton toggleBtnRedirect;
     private TextView urlText;
 
     private String ipAddr;
@@ -122,6 +130,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
 
         WSApplication.getInstance().startWsService();
         WSReceiver.register(this, this);
+        WifiApStateReceiver.register(this, this);
     }
 
     private void initObjs(Bundle state) {
@@ -133,6 +142,11 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtn.setOnClickListener(this);
         urlText = (TextView) findViewById(R.id.urlText);
 
+        toggleBtnAp = (ToggleButton) findViewById(R.id.toggleBtnAp);
+        toggleBtnAp.setOnClickListener(this);
+        toggleBtnAp.setChecked(WifiApManager.getInstance(this).isWifiApEnabled());
+        toggleBtnRedirect = (ToggleButton) findViewById(R.id.toggleBtnRedirect);
+        toggleBtnRedirect.setOnClickListener(this);
         if (state != null) {
             ipAddr = state.getString("ipAddr");
             needResumeServer = state.getBoolean("needResumeServer", false);
@@ -171,6 +185,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        WifiApStateReceiver.unregister(this);
         WSReceiver.unregister(this);
         WSApplication.getInstance().stopWsService();
     }
@@ -193,19 +208,26 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
 
     @Override
     public void onClick(View v) {
-        boolean isChecked = toggleBtn.isChecked();
-        if (isChecked) {
-            // 取消验证本地网络
-            /*
-            if (!isWebServAvailable()) {
-                toggleBtn.setChecked(false);
-                urlText.setText("");
-                showDialog(DLG_SERV_USELESS);
-                return;
-            }*/
-            doStartClick();
-        } else {
-            doStopClick();
+        if (R.id.toggleBtn == v.getId()) {
+            boolean isChecked = toggleBtn.isChecked();
+            if (isChecked) {
+                // 取消验证本地网络
+                /*
+                if (!isWebServAvailable()) {
+                    toggleBtn.setChecked(false);
+                    urlText.setText("");
+                    showDialog(DLG_SERV_USELESS);
+                    return;
+                }*/
+                doStartClick();
+            } else {
+                doStopClick();
+            }
+        } else if (R.id.toggleBtnAp == v.getId()) {
+            Log.d(Log.TAG, "toggleBtnAp");
+            setWifiApEnabled(toggleBtnAp.isChecked());
+        } else if (R.id.toggleBtnRedirect == v.getId()) {
+            setRedirect(toggleBtnRedirect.isChecked());
         }
         needResumeServer = false;
     }
@@ -361,4 +383,40 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         return dimension;
     }
 
+    private void setWifiApEnabled(boolean enabled) {
+        WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
+    }
+
+    @Override
+    public void onWifiApStateChanged(int state) {
+        if (state == WifiApStateReceiver.WIFI_AP_STATE_DISABLING || state == WifiApStateReceiver.WIFI_AP_STATE_ENABLING) {
+            toggleBtnAp.setEnabled(false);
+        } else if(state == WifiApStateReceiver.WIFI_AP_STATE_DISABLED || state == WifiApStateReceiver.WIFI_AP_STATE_ENABLED) {
+            toggleBtnAp.setEnabled(true);
+        }
+        if (state == WifiApStateReceiver.WIFI_AP_STATE_ENABLED) {
+            WifiConfiguration config = WifiApManager.getInstance(this).getWifiApConfiguration();
+            if (config != null) {
+                urlText.setText("ssid : " + config.SSID + "\n" + config.preSharedKey);
+            }
+        } else if (state == WifiApStateReceiver.WIFI_AP_STATE_DISABLED) {
+            urlText.setText("");
+        }
+    }
+    private void setRedirect(boolean redirect) {
+        Log.d(Log.TAG, "CommonUtil.isRooted() = " + CommonUtil.isRooted());
+        if (CommonUtil.isRooted()) {
+            boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect);
+            toggleBtnRedirect.setChecked(result ? redirect : false);
+            if (result && redirect) {
+                Intent intent = new Intent(this, WebService.class);
+                intent.putExtra("dns", 1);
+                startService(intent);
+            } else {
+                Intent intent = new Intent(this, WebService.class);
+                intent.putExtra("dns", 0);
+                startService(intent);
+            }
+        }
+    }
 }

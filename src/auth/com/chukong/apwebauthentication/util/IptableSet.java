@@ -52,7 +52,7 @@ public class IptableSet {
         script += IptableSet.NAT_RULES_CLEAR_IP_CHAIN + "\n";
         return script;
     }
-    public static String generateIpCheckRule(String ipAddrMask) {
+    public static String generateIpCheckRule() {
         String script = "";
         script += IptableSet.NAT_RULE_CREATE_IP_CHECK_CHAIN + "\n";
         script += NAT_RULE_REDIRECT_HTTP_80 + "\n";

@@ -10,9 +10,6 @@ import org.join.ws.serv.WebServer.OnWebServListener;
 import org.join.ws.ui.WebServActivity;
 import org.join.ws.util.CommonUtil;
 
-import com.chukong.apwebauthentication.dns.UDPSocketMonitor;
-import com.chukong.apwebauthentication.service.RedirectSwitch;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -20,7 +17,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
+import android.provider.Settings;
+
+import com.chukong.apwebauthentication.util.Log;
+
+import com.chukong.apwebauthentication.dns.UDPSocketMonitor;
 
 /**
  * @brief Web Service后台
@@ -68,7 +69,6 @@ public class WebService extends Service implements OnWebServListener {
 
         String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
         Log.d("taugin", "localAddress = " + localAddress);
-        uDPSocketMonitor = new UDPSocketMonitor(localAddress, 7755);
 
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
@@ -84,11 +84,6 @@ public class WebService extends Service implements OnWebServListener {
             webServer.setDaemon(true);
             webServer.start();
         }
-        if (RedirectSwitch.getInstance(getBaseContext()).getWifiApState()) {
-            if (uDPSocketMonitor != null) {
-                uDPSocketMonitor.start();
-            }
-        }
     }
 
     @Override
@@ -101,10 +96,6 @@ public class WebService extends Service implements OnWebServListener {
         if (webServer != null) {
             webServer.close();
             webServer = null;
-        }
-        if (uDPSocketMonitor != null) {
-            uDPSocketMonitor.close();
-            uDPSocketMonitor = null;
         }
     }
 
@@ -122,10 +113,6 @@ public class WebService extends Service implements OnWebServListener {
             mListener.onStarted();
         }
         isRunning = true;
-
-        Intent intent = new Intent("org.join.service.WS");
-        intent.putExtra("op", 1);
-        startService(intent);
     }
 
     @Override
@@ -137,9 +124,6 @@ public class WebService extends Service implements OnWebServListener {
             mListener.onStopped();
         }
         isRunning = false;
-        Intent intent = new Intent("org.join.service.WS");
-        intent.putExtra("op", 0);
-        startService(intent);
     }
 
     @Override
@@ -211,4 +195,31 @@ public class WebService extends Service implements OnWebServListener {
         this.mListener = mListener;
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(Log.TAG, "WebService intent = " + intent);
+        if (intent != null) {
+            int op = intent.getIntExtra("dns", 0);
+            if (op == 1) {
+                openDnsServer();
+            } else {
+                closeDnsServer();
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void openDnsServer() {
+        if (uDPSocketMonitor == null) {
+            String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
+            uDPSocketMonitor = new UDPSocketMonitor(localAddress, 7755);
+            uDPSocketMonitor.start();
+        }
+    }
+    public void closeDnsServer() {
+        if (uDPSocketMonitor != null) {
+            uDPSocketMonitor.close();
+            uDPSocketMonitor = null;
+        }
+    }
 }

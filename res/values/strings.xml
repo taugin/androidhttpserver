@@ -3,8 +3,8 @@
 
     <string name="app_name">WebServ</string>
     <!-- Buttons -->
-    <string name="btn_start">Start</string>
-    <string name="btn_stop">Stop</string>
+    <string name="btn_start">Start WebService</string>
+    <string name="btn_stop">Stop WebService</string>
     <!-- Menus -->
     <string name="menu_scan_barcode">Scan Barcode</string>
     <string name="menu_preferences">Preferences</string>
@@ -86,5 +86,11 @@
     <string name="v_del_fail">Deletion fails.</string>
     <string name="v_up_fail">Upload fails.</string>
     <string name="v_not_allow">No longer allowed func.</string>
+
+    <!-- Wifiap -->
+    <string name="btn_start_ap">Star tWifiAp</string>
+    <string name="btn_stop_ap">Stop WifiAp</string>
+    <string name="btn_start_redirect">Start Redirect</string>
+    <string name="btn_stop_redirect">Stop  Redirect</string>
 
 </resources>

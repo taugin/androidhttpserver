@@ -9,14 +9,33 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:textIsSelectable="true"
-        android:layout_centerInParent="true"
         android:textSize="20sp" />
+
     <ToggleButton
         android:id="@+id/toggleBtn"
         style="@style/BtnToggleCool"
-        android:layout_width="120dp"
-        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_below="@id/urlText"
         android:textOff="@string/btn_start"
         android:textOn="@string/btn_stop" />
+
+    <ToggleButton
+        android:id="@+id/toggleBtnAp"
+        style="@style/BtnToggleCool"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/toggleBtn"
+        android:textOff="@string/btn_start_ap"
+        android:textOn="@string/btn_stop_ap" />
+
+    <ToggleButton
+        android:id="@+id/toggleBtnRedirect"
+        style="@style/BtnToggleCool"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/toggleBtnAp"
+        android:textOff="@string/btn_start_redirect"
+        android:textOn="@string/btn_stop_redirect" />
+
 </RelativeLayout>

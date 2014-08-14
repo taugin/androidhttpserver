@@ -21,9 +21,11 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StatFs;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import com.chukong.apwebauthentication.util.Log;
+
+import com.chukong.apwebauthentication.util.CmdExecutor;
 
 /**
  * @brief 通用工具
@@ -268,4 +270,16 @@ public class CommonUtil {
         return flag;
     }
 
+    public static boolean isRooted() {
+        String ENV_PATH[] = {"/sbin", "/vendor/bin", "/system/sbin", "/system/bin", "/system/xbin"};
+        File suFile = null;
+        for (String path : ENV_PATH) {
+            suFile = new File(path + "/su");
+            Log.d(Log.TAG, "suFile = " + suFile + " , exist = " + suFile.exists());
+            if (suFile.exists()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

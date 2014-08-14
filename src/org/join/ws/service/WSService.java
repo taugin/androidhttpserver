@@ -98,24 +98,4 @@ public class WSService extends Service implements OnNetworkListener, OnStorageLi
             isWebServAvailable = isAvailable;
         }
     }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent == null) {
-            return super.onStartCommand(intent, flags, startId);
-        }
-        if ("org.join.service.WS".equals(intent.getAction())) {
-            final int op = intent.getIntExtra("op", -1);
-            new Thread(){
-                public void run() {
-                    if (op == 1) {
-                        RedirectSwitch.getInstance(getBaseContext()).openRedirectIfWifiApEnabled();
-                    } else if (op == 0) {
-                        RedirectSwitch.getInstance(getBaseContext()).closeRedirect();
-                    }
-                }
-            }.start();
-        }
-        return super.onStartCommand(intent, flags, startId);
-    }
 }

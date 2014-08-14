@@ -13,14 +13,6 @@ import com.chukong.apwebauthentication.util.CommonUtil;
 import com.chukong.apwebauthentication.util.IptableSet;
 
 public class RedirectSwitch {
-    public static final int WIFI_AP_STATE_UNKNOWN = -1;
-    public static final int WIFI_AP_STATE_DISABLING = 10;
-    public static final int WIFI_AP_STATE_DISABLED = 11;
-    public static final int WIFI_AP_STATE_ENABLING = 12;
-    public static final int WIFI_AP_STATE_ENABLED = 13;
-    public static final int WIFI_AP_STATE_FAILED = 14;
-    public static final String WIFI_AP_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_AP_STATE_CHANGED";
-    public static final String EXTRA_WIFI_AP_STATE = "wifi_state";
     private boolean mRedirected = false;
     private Context mContext;
     private RedirectSwitch(Context context) {
@@ -35,62 +27,41 @@ public class RedirectSwitch {
         return sRedirectSwitch;
     }
 
-    public boolean getWifiApState() {
-        boolean enabled = false;
-        WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-        try {
-            Method method = wifiManager.getClass().getDeclaredMethod("isWifiApEnabled");
-            enabled = (Boolean) method.invoke(wifiManager);
-        } catch (NoSuchMethodException e) {
-            Log.d(Log.TAG, "e = " + e);
-        } catch (IllegalAccessException e) {
-            Log.d(Log.TAG, "e = " + e);
-        } catch (IllegalArgumentException e) {
-            Log.d(Log.TAG, "e = " + e);
-        } catch (InvocationTargetException e) {
-            Log.d(Log.TAG, "e = " + e);
-            e.printStackTrace();
+    public boolean setRedirectState(boolean redirect) {
+        String script = null;
+        if (redirect) {
+            script = IptableSet.generateClearIpRule() + IptableSet.generateIpCheckRule();
+        } else {
+            script = IptableSet.generateClearIpRule();
         }
-        return enabled;
-    }
-    public void openRedirectIfWifiApEnabled() {
-        Log.d(Log.TAG, "openRedirectIfWifiApEnabled");
-        if (!getWifiApState()) {
-            return ;
-        }
-        Log.d(Log.TAG, "openRedirect");
         StringBuilder builder = new StringBuilder();
-        String addr = null;
-        while((addr = CommonUtil.getLocalIpAddress()) == null) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.d(Log.TAG, "add = " + addr);
+        int exitCode = -1;
         try {
-            CmdExecutor.runScriptAsRoot("netcfg", builder);
-            String addrMast = CommonUtil.pickIpAndMask(builder.toString(), addr);
-            Log.d(Log.TAG, "addrMast = " + addrMast);
-            builder.delete(0, builder.length());
-            mRedirected = CmdExecutor.runScriptAsRoot(IptableSet.generateIpCheckRule(addrMast), builder) == 0;
-            Log.d(Log.TAG, "builder = " + builder.toString());
+            exitCode = CmdExecutor.runScriptAsRoot(script, builder);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d(Log.TAG, builder.toString());
+        if (exitCode != 0) {
+            return false;
+        }
+        return true;
     }
-    
-    public void closeRedirect() {
-        Log.d(Log.TAG, "closeRedirect");
-        if (mRedirected) {
-            StringBuilder builder = new StringBuilder();
-            try {
-                CmdExecutor.runScriptAsRoot(IptableSet.generateClearIpRule(), builder);
-                Log.d(Log.TAG, "builder = " + builder.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
+    public boolean hasRedirected() {
+        String script = IptableSet.NAT_RULE_LIST;
+        StringBuilder builder = new StringBuilder();
+        int exitCode = -1;
+        try {
+            exitCode = CmdExecutor.runScriptAsRoot(script, builder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (exitCode == 0) {
+            int index = builder.indexOf("IP_CHECK");
+            if (index != -1) {
+                return true;
             }
         }
+        return false;
     }
 }
