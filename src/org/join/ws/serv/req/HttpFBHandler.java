@@ -65,7 +65,6 @@ public class HttpFBHandler implements HttpRequestHandler {
         String target = URLDecoder.decode(request.getRequestLine().getUri(), Config.ENCODING);
         Header requestHost = request.getFirstHeader("Host");
         Log.d(Log.TAG, "requestHost = " + (requestHost != null ? requestHost.getValue() : "null") + " , target = " + target);
-
         String requestMethod = null;
         RequestLine requestLine = request.getRequestLine();
         if (requestLine != null) {
@@ -120,7 +119,8 @@ public class HttpFBHandler implements HttpRequestHandler {
 
         response.setHeader("Content-Type", contentType);
         response.setEntity(entity);
-
+        // Log.d(Log.TAG, "contentType = " + contentType);
+        // printRequest(response);
         Progress.clear();
     }
 
@@ -219,7 +219,7 @@ public class HttpFBHandler implements HttpRequestHandler {
             if (Config.ALLOW_DOWNLOAD) {
                 row.can_download = true;
             }
-            if (f.canWrite() && !hasWsDir(f)) {
+            if (f.canWrite()) {
                 if (Config.ALLOW_DELETE) {
                     row.can_delete = true;
                 }
@@ -282,9 +282,6 @@ public class HttpFBHandler implements HttpRequestHandler {
         }
         return null;
     }
-    private boolean hasWsDir(File f) {
-        return HttpDelHandler.hasWsDir(f);
-    }
 
     /** 排序：文件夹、文件，再各安字符顺序 */
     private void sort(File[] files) {
@@ -302,4 +299,10 @@ public class HttpFBHandler implements HttpRequestHandler {
         });
     }
 
+    private void printRequest(HttpResponse request) {
+        Header headers[] = request.getAllHeaders();
+        for (Header h : headers) {
+            Log.d(Log.TAG, h.getName() + " : " + h.getValue());
+        }
+    }
 }

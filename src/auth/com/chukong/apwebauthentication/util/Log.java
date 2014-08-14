@@ -68,7 +68,8 @@ public class Log {
         if (element != null && element.length >= 4) {
             String methodName = element[4].getMethodName();
             int lineNumber = element[4].getLineNumber();
-            return String.format("%s : %d ---> ", methodName, lineNumber);
+            long threadId = Thread.currentThread().getId();
+            return String.format("T:%d : %s : %d ---> ", threadId, methodName, lineNumber);
         }
         return null;
     }
