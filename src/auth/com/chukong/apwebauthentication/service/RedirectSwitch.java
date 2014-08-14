@@ -42,23 +42,23 @@ public class RedirectSwitch {
             Method method = wifiManager.getClass().getDeclaredMethod("isWifiApEnabled");
             enabled = (Boolean) method.invoke(wifiManager);
         } catch (NoSuchMethodException e) {
-            Log.d("taugin", "e = " + e);
+            Log.d(Log.TAG, "e = " + e);
         } catch (IllegalAccessException e) {
-            Log.d("taugin", "e = " + e);
+            Log.d(Log.TAG, "e = " + e);
         } catch (IllegalArgumentException e) {
-            Log.d("taugin", "e = " + e);
+            Log.d(Log.TAG, "e = " + e);
         } catch (InvocationTargetException e) {
-            Log.d("taugin", "e = " + e);
+            Log.d(Log.TAG, "e = " + e);
             e.printStackTrace();
         }
         return enabled;
     }
     public void openRedirectIfWifiApEnabled() {
-        Log.d("taugin", "openRedirectIfWifiApEnabled");
+        Log.d(Log.TAG, "openRedirectIfWifiApEnabled");
         if (!getWifiApState()) {
             return ;
         }
-        Log.d("taugin", "openRedirect");
+        Log.d(Log.TAG, "openRedirect");
         StringBuilder builder = new StringBuilder();
         String addr = null;
         while((addr = CommonUtil.getLocalIpAddress()) == null) {
@@ -68,26 +68,26 @@ public class RedirectSwitch {
                 e.printStackTrace();
             }
         }
-        Log.d("taugin", "add = " + addr);
+        Log.d(Log.TAG, "add = " + addr);
         try {
             CmdExecutor.runScriptAsRoot("netcfg", builder);
             String addrMast = CommonUtil.pickIpAndMask(builder.toString(), addr);
-            Log.d("taugin", "addrMast = " + addrMast);
+            Log.d(Log.TAG, "addrMast = " + addrMast);
             builder.delete(0, builder.length());
             mRedirected = CmdExecutor.runScriptAsRoot(IptableSet.generateIpCheckRule(addrMast), builder) == 0;
-            Log.d("taugin", "builder = " + builder.toString());
+            Log.d(Log.TAG, "builder = " + builder.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
     public void closeRedirect() {
-        Log.d("taugin", "closeRedirect");
+        Log.d(Log.TAG, "closeRedirect");
         if (mRedirected) {
             StringBuilder builder = new StringBuilder();
             try {
                 CmdExecutor.runScriptAsRoot(IptableSet.generateClearIpRule(), builder);
-                Log.d("taugin", "builder = " + builder.toString());
+                Log.d(Log.TAG, "builder = " + builder.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
