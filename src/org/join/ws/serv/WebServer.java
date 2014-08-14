@@ -21,14 +21,9 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.join.ws.Constants.Config;
-import org.join.ws.serv.req.HttpDelHandler;
-import org.join.ws.serv.req.HttpDownHandler;
 import org.join.ws.serv.req.HttpFBHandler;
 import org.join.ws.serv.req.HttpProgressHandler;
-import org.join.ws.serv.req.HttpUpHandler;
 import org.join.ws.util.CommonUtil;
-
-import android.util.Log;
 
 /**
  * @brief Web服务类
@@ -98,9 +93,9 @@ public class WebServer extends Thread {
             // 创建HTTP请求执行器注册表
             HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
             // 增加HTTP请求执行器
-            reqistry.register(UrlPattern.DOWNLOAD, new HttpDownHandler(webRoot));
-            reqistry.register(UrlPattern.DELETE, new HttpDelHandler(webRoot));
-            reqistry.register(UrlPattern.UPLOAD, new HttpUpHandler(webRoot));
+            // reqistry.register(UrlPattern.DOWNLOAD, new HttpDownHandler(webRoot));
+            // reqistry.register(UrlPattern.DELETE, new HttpDelHandler(webRoot));
+            // reqistry.register(UrlPattern.UPLOAD, new HttpUpHandler(webRoot));
             reqistry.register(UrlPattern.PROGRESS, new HttpProgressHandler());
             reqistry.register(UrlPattern.BROWSE, new HttpFBHandler(webRoot));
             // 设置HTTP请求执行器

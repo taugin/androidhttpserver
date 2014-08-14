@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.fileupload.util.mime;
+package org.join.ws.serv.support;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -7,10 +7,6 @@ import org.join.ws.receiver.OnWsListener;
 import org.join.ws.receiver.WSReceiver;
 import org.join.ws.serv.WebServer;
 import org.join.ws.util.CommonUtil;
-import org.join.zxing.CaptureActivity;
-import org.join.zxing.Contents;
-import org.join.zxing.Intents;
-import org.join.zxing.encode.QRCodeEncoder;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,7 +14,6 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,17 +26,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import com.chukong.apwebauthentication.service.RedirectSwitch;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.result.ParsedResultType;
 
 /**
  * @brief 主活动界面
@@ -58,8 +46,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
 
     private ToggleButton toggleBtn;
     private TextView urlText;
-    private ImageView qrCodeView;
-    private LinearLayout contentLayout;
 
     private String ipAddr;
 
@@ -74,7 +60,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private static final int DLG_TEMP_NOT_FOUND = 0x0203;
     private static final int DLG_SCAN_RESULT = 0x0204;
 
-    private static final int REQ_CAPTURE = 0x0001;
     private String lastResult;
 
     private Handler mHandler = new Handler() {
@@ -84,23 +69,24 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             switch (msg.what) {
             case W_START: {
                 setUrlText(ipAddr);
+                /*
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) toggleBtn
                         .getLayoutParams();
                 params.addRule(RelativeLayout.CENTER_IN_PARENT, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-                contentLayout.setVisibility(View.VISIBLE);
+                */
                 break;
             }
             case W_STOP: {
                 urlText.setText("");
-                qrCodeView.setImageResource(0);
+                /*
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) toggleBtn
                         .getLayoutParams();
                 params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 params.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
-                contentLayout.setVisibility(View.GONE);
+                */
                 break;
             }
             case W_ERROR:
@@ -146,8 +132,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtn = (ToggleButton) findViewById(R.id.toggleBtn);
         toggleBtn.setOnClickListener(this);
         urlText = (TextView) findViewById(R.id.urlText);
-        qrCodeView = (ImageView) findViewById(R.id.qrCodeView);
-        contentLayout = (LinearLayout) findViewById(R.id.contentLayout);
 
         if (state != null) {
             ipAddr = state.getString("ipAddr");
@@ -164,7 +148,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private void setUrlText(String ipAddr) {
         String url = "http://" + ipAddr + ":" + Config.PORT + "/";
         urlText.setText(url);
-        generateQRCode(url);
     }
 
     @Override
@@ -201,41 +184,11 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.action_scan_barcode:
-            toCaptureActivity();
-            break;
         case R.id.action_preferences:
             toPreferActivity();
             break;
         }
         return super.onMenuItemSelected(featureId, item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQ_CAPTURE) {
-            if (resultCode == RESULT_OK) {
-                String result = data.getStringExtra(Intents.Scan.RESULT);
-                ParsedResultType type = ParsedResultType.values()[data.getIntExtra(
-                        Intents.Scan.RESULT_TYPE, ParsedResultType.TEXT.ordinal())];
-                boolean isShow = false;
-                try {
-                    if (type == ParsedResultType.URI) {
-                        toBrowserActivity(result);
-                    } else {
-                        isShow = true;
-                    }
-                } catch (ActivityNotFoundException e) {
-                    isShow = true;
-                } finally {
-                    lastResult = result;
-                    if (isShow)
-                        showDialog(DLG_SCAN_RESULT);
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 
     @Override
@@ -389,16 +342,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         }
     }
 
-    private void toCaptureActivity() {
-        try {
-            Intent intent = new Intent(this, CaptureActivity.class);
-            intent.setAction(Intents.Scan.ACTION);
-            startActivityForResult(intent, REQ_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void toBrowserActivity(String uri) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
     }
@@ -406,24 +349,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private void copy2Clipboard(String text) {
         ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         cm.setText(text);
-    }
-
-    private void generateQRCode(String text) {
-        Intent intent = new Intent(Intents.Encode.ACTION);
-        intent.putExtra(Intents.Encode.FORMAT, BarcodeFormat.QR_CODE.toString());
-        intent.putExtra(Intents.Encode.TYPE, Contents.Type.TEXT);
-        intent.putExtra(Intents.Encode.DATA, text);
-        try {
-            int dimension = getDimension();
-            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, intent, dimension, false);
-            Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
-            if (bitmap == null) {
-                Log.w(TAG, "Could not encode barcode");
-            } else {
-                qrCodeView.setImageBitmap(bitmap);
-            }
-        } catch (WriterException e) {
-        }
     }
 
     private int getDimension() {

@@ -3,7 +3,6 @@ package org.join.ws.serv.support;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.fileupload.ParameterParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
