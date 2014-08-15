@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.join.ws.Constants;
+
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
+
 import com.chukong.apwebauthentication.util.Log;
 
 import com.chukong.apwebauthentication.util.CmdExecutor;
@@ -45,6 +49,7 @@ public class RedirectSwitch {
         if (exitCode != 0) {
             return false;
         }
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(Constants.REDIRECT_STARTED, redirect).apply();
         return true;
     }
     public boolean hasRedirected() {

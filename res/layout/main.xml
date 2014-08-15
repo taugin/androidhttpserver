@@ -4,13 +4,21 @@
     android:layout_height="fill_parent" >
 
     <TextView
-        android:id="@+id/urlText"
+        android:id="@+id/wifiApssid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:textIsSelectable="true"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/urlText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wifiApssid"
+        android:layout_marginBottom="30dp"
+        android:textIsSelectable="true"
+        android:textSize="20sp" />
     <ToggleButton
         android:id="@+id/toggleBtn"
         style="@style/BtnToggleCool"

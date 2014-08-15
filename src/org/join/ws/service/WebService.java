@@ -6,8 +6,10 @@ import java.util.TimerTask;
 import org.join.web.serv.R;
 import org.join.ws.Constants;
 import org.join.ws.Constants.Config;
+import org.join.ws.receiver.WSReceiver;
 import org.join.ws.serv.WebServer;
 import org.join.ws.serv.WebServer.OnWebServListener;
+import org.join.ws.ui.WSActivity;
 import org.join.ws.ui.WebServActivity;
 import org.join.ws.util.CommonUtil;
 
@@ -74,7 +76,7 @@ public class WebService extends Service implements OnWebServListener {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(Log.TAG, "intent = " + intent);
-        openWebServer();
+        //openWebServer();
         return mBinder;
     }
 
@@ -90,8 +92,8 @@ public class WebService extends Service implements OnWebServListener {
     @Override
     public boolean onUnbind(Intent intent) {
         Log.d(Log.TAG, "intent = " + intent);
-        closeWebServer();
-        return super.onUnbind(intent);
+        //closeWebServer();
+        return true;
     }
 
     private void closeWebServer() {
@@ -103,6 +105,8 @@ public class WebService extends Service implements OnWebServListener {
 
     @Override
     public void onDestroy() {
+        closeDnsServer();
+        closeWebServer();
         super.onDestroy();
     }
 
@@ -114,6 +118,7 @@ public class WebService extends Service implements OnWebServListener {
         if (mListener != null) {
             mListener.onStarted();
         }
+        onWebServerStart();
         isRunning = true;
     }
 
@@ -125,6 +130,7 @@ public class WebService extends Service implements OnWebServListener {
         if (mListener != null) {
             mListener.onStopped();
         }
+        onWebServerStop();
         isRunning = false;
     }
 
@@ -136,6 +142,7 @@ public class WebService extends Service implements OnWebServListener {
             if (mListener != null) {
                 mListener.onError(code);
             }
+            onWebServerError(code);
             return;
         }
         errCount++;
@@ -181,7 +188,7 @@ public class WebService extends Service implements OnWebServListener {
         Notification notification = new Notification(iconId, text, System.currentTimeMillis());
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-                WebServActivity.class), 0);
+                WSActivity.class), 0);
 
         notification.setLatestEventInfo(this, getText(R.string.app_name), text, contentIntent);
         notification.flags = Notification.FLAG_ONGOING_EVENT;
@@ -227,5 +234,19 @@ public class WebService extends Service implements OnWebServListener {
             uDPSocketMonitor.close();
             uDPSocketMonitor = null;
         }
+    }
+
+    private void onWebServerStart() {
+        Intent intent = new Intent(WSReceiver.ACTION_WEBSERVER_START);
+        sendBroadcast(intent, WSReceiver.PERMIT_WS_RECEIVER);
+    }
+    private void onWebServerStop() {
+        Intent intent = new Intent(WSReceiver.ACTION_WEBSERVER_STOP);
+        sendBroadcast(intent, WSReceiver.PERMIT_WS_RECEIVER);
+    }
+    private void onWebServerError(int code) {
+        Intent intent = new Intent(WSReceiver.ACTION_WEBSERVER_ERROR);
+        intent.putExtra("error_code", code);
+        sendBroadcast(intent, WSReceiver.PERMIT_WS_RECEIVER);
     }
 }

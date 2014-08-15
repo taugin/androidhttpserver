@@ -42,7 +42,7 @@ public class UDPSocketMonitor extends Thread {
             System.exit(-1);
         }
 
-        this.setDaemon(true);
+        //this.setDaemon(true);
     }
 
     @Override

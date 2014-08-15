@@ -22,6 +22,9 @@ public class WSReceiver extends BroadcastReceiver {
 
     public static final String ACTION_SERV_AVAILABLE = "org.join.action.SERV_AVAILABLE";
     public static final String ACTION_SERV_UNAVAILABLE = "org.join.action.SERV_UNAVAILABLE";
+    public static final String ACTION_WEBSERVER_START = "org.join.action.WEBSERVER_START";
+    public static final String ACTION_WEBSERVER_STOP = "org.join.action.WEBSERVER_STOP";
+    public static final String ACTION_WEBSERVER_ERROR = "org.join.action.WEBSERVER_ERROR";
 
     public static final String PERMIT_WS_RECEIVER = "org.join.ws.permission.WS_RECEIVER";
 
@@ -48,6 +51,9 @@ public class WSReceiver extends BroadcastReceiver {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SERV_AVAILABLE);
         filter.addAction(ACTION_SERV_UNAVAILABLE);
+        filter.addAction(ACTION_WEBSERVER_START);
+        filter.addAction(ACTION_WEBSERVER_STOP);
+        filter.addAction(ACTION_WEBSERVER_ERROR);
         context.registerReceiver(receiver, filter);
 
         mReceiverMap.put(context, receiver);
@@ -80,8 +86,14 @@ public class WSReceiver extends BroadcastReceiver {
         }
         if (ACTION_SERV_AVAILABLE.equals(action)) {
             mListener.onServAvailable();
-        } else { // ACTION_SERV_UNAVAILABLE
+        } else if (ACTION_SERV_UNAVAILABLE.equals(action)){ // ACTION_SERV_UNAVAILABLE
             mListener.onServUnavailable();
+        } else if (ACTION_WEBSERVER_START.equals(action)) {
+            mListener.onWebServerStart();
+        } else if (ACTION_WEBSERVER_STOP.equals(action)) {
+            mListener.onWebServerStop();
+        } else if (ACTION_WEBSERVER_ERROR.equals(action)) {
+            mListener.onWebServerError(intent.getIntExtra("error_code", 0));
         }
     }
 

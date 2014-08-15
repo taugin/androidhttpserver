@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 
     <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
@@ -105,6 +106,11 @@
                 <action android:name="android.net.wifi.WIFI_AP_STATE_CHANGED" />
             </intent-filter>
         </service>
+        <receiver android:name="com.chukong.apwebauthentication.receiver.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
         <uses-library android:name="android.test.runner" />
     </application>
 

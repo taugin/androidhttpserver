@@ -12,4 +12,7 @@ public interface OnWsListener {
      */
     void onServUnavailable();
 
+    void onWebServerStart();
+    void onWebServerStop();
+    void onWebServerError(int code);
 }

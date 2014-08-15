@@ -21,6 +21,7 @@ import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.view.Display;
 import android.view.Menu;
@@ -55,6 +56,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private ToggleButton toggleBtnAp;
     private ToggleButton toggleBtnRedirect;
     private TextView urlText;
+    private TextView wifiApText;
 
     private String ipAddr;
 
@@ -142,11 +144,14 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtn = (ToggleButton) findViewById(R.id.toggleBtn);
         toggleBtn.setOnClickListener(this);
         urlText = (TextView) findViewById(R.id.urlText);
+        wifiApText = (TextView) findViewById(R.id.wifiApssid);
 
         toggleBtnAp = (ToggleButton) findViewById(R.id.toggleBtnAp);
         toggleBtnAp.setOnClickListener(this);
         toggleBtnAp.setChecked(WifiApManager.getInstance(this).isWifiApEnabled());
         toggleBtnRedirect = (ToggleButton) findViewById(R.id.toggleBtnRedirect);
+        boolean redirect = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.REDIRECT_STARTED, false);
+        toggleBtnRedirect.setChecked(redirect);
         toggleBtnRedirect.setOnClickListener(this);
         if (state != null) {
             ipAddr = state.getString("ipAddr");
@@ -155,7 +160,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             if (isRunning) {
                 toggleBtn.setChecked(true);
                 setUrlText(ipAddr);
-                // doBindService();
             }
         }
     }
@@ -264,23 +268,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     }
 
     @Override
-    public void onStarted() {
-        mHandler.sendEmptyMessage(W_START);
-    }
-
-    @Override
-    public void onStopped() {
-        mHandler.sendEmptyMessage(W_STOP);
-    }
-
-    @Override
-    public void onError(int code) {
-        Message msg = mHandler.obtainMessage(W_ERROR);
-        msg.arg1 = code;
-        mHandler.sendMessage(msg);
-    }
-
-    @Override
     public void onServAvailable() {
         if (needResumeServer) {
             doStartClick();
@@ -371,23 +358,9 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         }
     }
 
-    private void toBrowserActivity(String uri) {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
-    }
-
     private void copy2Clipboard(String text) {
         ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         cm.setText(text);
-    }
-
-    private int getDimension() {
-        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        int width = display.getWidth();
-        int height = display.getHeight();
-        int dimension = width < height ? width : height;
-        dimension = dimension * 3 / 4;
-        return dimension;
     }
 
     private void setWifiApEnabled(boolean enabled) {
@@ -404,16 +377,22 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         if (state == WifiApStateReceiver.WIFI_AP_STATE_ENABLED) {
             WifiConfiguration config = WifiApManager.getInstance(this).getWifiApConfiguration();
             if (config != null) {
-                urlText.setText("ssid : " + config.SSID + "\n" + config.preSharedKey);
+                wifiApText.setText("ssid : " + config.SSID + "\n" + config.preSharedKey);
             }
         } else if (state == WifiApStateReceiver.WIFI_AP_STATE_DISABLED) {
-            urlText.setText("");
+            wifiApText.setText("");
         }
     }
     private void setRedirect(boolean redirect) {
         Log.d(Log.TAG, "CommonUtil.isRooted() = " + CommonUtil.isRooted());
+        boolean wifiApEnabled = WifiApManager.getInstance(this).isWifiApEnabled();
+        if (redirect && !wifiApEnabled) {
+            Toast.makeText(this, "建议先开启WifiAp", Toast.LENGTH_SHORT).show();
+            toggleBtnRedirect.setChecked(false);
+            return ;
+        }
         if (CommonUtil.isRooted()) {
-            boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect) || true;
+            boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect);
             toggleBtnRedirect.setChecked(result ? redirect : false);
             if (result && redirect) {
                 Intent intent = new Intent(this, WebService.class);
@@ -421,9 +400,30 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
                 startService(intent);
             } else if (result && !redirect) {
                 Intent intent = new Intent(this, WebService.class);
-                intent.putExtra("op", Constants.OP_START_DNSSERVER);
+                intent.putExtra("op", Constants.OP_STOP_DNSSERVER);
                 startService(intent);
+            } else {
+                
             }
+        } else {
+            toggleBtnRedirect.setChecked(false);
         }
+    }
+
+    @Override
+    public void onWebServerStart() {
+        mHandler.sendEmptyMessage(W_START);
+    }
+
+    @Override
+    public void onWebServerStop() {
+        mHandler.sendEmptyMessage(W_STOP);
+    }
+
+    @Override
+    public void onWebServerError(int code) {
+        Message msg = mHandler.obtainMessage(W_ERROR);
+        msg.arg1 = code;
+        mHandler.sendMessage(msg);
     }
 }

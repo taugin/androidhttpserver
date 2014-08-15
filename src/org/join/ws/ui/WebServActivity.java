@@ -16,7 +16,7 @@ import android.os.IBinder;
  * @brief 绑定Web Service的抽象Activity
  * @author join
  */
-public abstract class WebServActivity extends Activity implements OnWebServListener {
+public abstract class WebServActivity extends Activity {
 
     static final String TAG = "WebServActivity";
 
@@ -29,12 +29,12 @@ public abstract class WebServActivity extends Activity implements OnWebServListe
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             webService = ((WebService.LocalBinder) service).getService();
-            webService.setOnWebServListener(WebServActivity.this);
+            //webService.setOnWebServListener(WebServActivity.this);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            webService = null;
+            //webService = null;
         }
     };
 
@@ -42,6 +42,7 @@ public abstract class WebServActivity extends Activity implements OnWebServListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         webServIntent = new Intent(this, WebService.class);
+        //doBindService();
     }
 
     protected boolean isBound() {
@@ -49,11 +50,9 @@ public abstract class WebServActivity extends Activity implements OnWebServListe
     }
 
     protected void doBindService() {
-        Log.d(Log.TAG, "isBound11111 = " + isBound);
         // Restore configs of port and root here.
         PreferActivity.restore(PreferActivity.KEY_SERV_PORT, PreferActivity.KEY_SERV_ROOT);
         bindService(webServIntent, servConnection, 0);
-        Log.d(Log.TAG, "isBound22222 = " + isBound);
         isBound = true;
     }
 
@@ -67,8 +66,7 @@ public abstract class WebServActivity extends Activity implements OnWebServListe
 
     @Override
     protected void onDestroy() {
-        doUnbindService();
+        //doUnbindService();
         super.onDestroy();
     }
-
 }
