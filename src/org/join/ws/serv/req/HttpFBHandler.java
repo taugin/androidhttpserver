@@ -3,6 +3,7 @@ package org.join.ws.serv.req;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,11 +65,15 @@ public class HttpFBHandler implements HttpRequestHandler {
             throws HttpException, IOException {
         String target = URLDecoder.decode(request.getRequestLine().getUri(), Config.ENCODING);
         Header requestHost = request.getFirstHeader("Host");
-        Log.d(Log.TAG, "requestHost = " + (requestHost != null ? requestHost.getValue() : "null") + " , target = " + target);
+        InetAddress ipAddress = (InetAddress) context.getAttribute("remote_ip_address");
+        Log.d(Log.TAG, "clientIpAddress = " + ipAddress.getHostAddress() + " , target = " + target);
         String requestMethod = null;
         RequestLine requestLine = request.getRequestLine();
         if (requestLine != null) {
             requestMethod = requestLine.getMethod();
+        }
+        if (target.startsWith("/download")) {
+            target = target.substring("/download".length());
         }
         File file;
         if (target.equals("/view.html")) {
@@ -299,8 +304,14 @@ public class HttpFBHandler implements HttpRequestHandler {
         });
     }
 
-    private void printRequest(HttpResponse request) {
+    private void printRequest(HttpRequest request) {
         Header headers[] = request.getAllHeaders();
+        for (Header h : headers) {
+            Log.d(Log.TAG, h.getName() + " : " + h.getValue());
+        }
+    }
+    private void printResponse(HttpResponse res) {
+        Header headers[] = res.getAllHeaders();
         for (Header h : headers) {
             Log.d(Log.TAG, h.getName() + " : " + h.getValue());
         }

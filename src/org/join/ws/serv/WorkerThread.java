@@ -5,11 +5,13 @@ import java.io.IOException;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
 import org.apache.http.HttpServerConnection;
+import org.apache.http.impl.DefaultHttpServerConnection;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpService;
 import org.join.ws.Constants.Config;
 import org.join.ws.serv.WebServer.OnWebServListener;
+import com.chukong.apwebauthentication.util.Log;
 
 /**
  * @brief Web服务工作线程
@@ -34,6 +36,10 @@ public class WorkerThread extends Thread {
     @Override
     public void run() {
         HttpContext context = new BasicHttpContext();
+        if (conn instanceof DefaultHttpServerConnection) {
+            DefaultHttpServerConnection defaultConn = (DefaultHttpServerConnection)conn;
+            context.setAttribute("remote_ip_address", defaultConn.getRemoteAddress());
+        }
         try {
             while (WebServer.isLoop && !Thread.interrupted() && this.conn.isOpen()) {
                 this.httpservice.handleRequest(this.conn, context);
