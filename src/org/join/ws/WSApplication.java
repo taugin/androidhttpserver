@@ -63,7 +63,7 @@ public class WSApplication extends Application {
      */
     public void stopWsService() {
         stopService(wsServIntent);
-        stopService(new Intent(this, WebService.class));
+        //stopService(new Intent(this, WebService.class));
     }
 
     /**

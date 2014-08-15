@@ -134,6 +134,9 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         WSApplication.getInstance().startWsService();
         WSReceiver.register(this, this);
         WifiApStateReceiver.register(this, this);
+        Intent intent = new Intent(this, WebService.class);
+        intent.putExtra("op", Constants.OP_QUERY_WEBSERVER);
+        startService(intent);
     }
 
     private void initObjs(Bundle state) {
@@ -425,5 +428,11 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         Message msg = mHandler.obtainMessage(W_ERROR);
         msg.arg1 = code;
         mHandler.sendMessage(msg);
+    }
+
+    @Override
+    public void onWebServerRunning(boolean isRunning) {
+        Log.d(Log.TAG, "isRunning = " + isRunning);
+        toggleBtn.setChecked(isRunning);
     }
 }

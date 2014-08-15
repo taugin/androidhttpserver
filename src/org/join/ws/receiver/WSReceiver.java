@@ -25,6 +25,7 @@ public class WSReceiver extends BroadcastReceiver {
     public static final String ACTION_WEBSERVER_START = "org.join.action.WEBSERVER_START";
     public static final String ACTION_WEBSERVER_STOP = "org.join.action.WEBSERVER_STOP";
     public static final String ACTION_WEBSERVER_ERROR = "org.join.action.WEBSERVER_ERROR";
+    public static final String ACTION_WEBSERVER_RUNNING = "org.join.action.WEBSERVER_RUNNING";
 
     public static final String PERMIT_WS_RECEIVER = "org.join.ws.permission.WS_RECEIVER";
 
@@ -54,6 +55,7 @@ public class WSReceiver extends BroadcastReceiver {
         filter.addAction(ACTION_WEBSERVER_START);
         filter.addAction(ACTION_WEBSERVER_STOP);
         filter.addAction(ACTION_WEBSERVER_ERROR);
+        filter.addAction(ACTION_WEBSERVER_RUNNING);
         context.registerReceiver(receiver, filter);
 
         mReceiverMap.put(context, receiver);
@@ -94,6 +96,8 @@ public class WSReceiver extends BroadcastReceiver {
             mListener.onWebServerStop();
         } else if (ACTION_WEBSERVER_ERROR.equals(action)) {
             mListener.onWebServerError(intent.getIntExtra("error_code", 0));
+        } else if (ACTION_WEBSERVER_RUNNING.equals(action)) {
+            mListener.onWebServerRunning(intent.getBooleanExtra("server_running", false));
         }
     }
 

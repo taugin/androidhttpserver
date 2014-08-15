@@ -15,4 +15,5 @@ public interface OnWsListener {
     void onWebServerStart();
     void onWebServerStop();
     void onWebServerError(int code);
+    void onWebServerRunning(boolean isRunning);
 }

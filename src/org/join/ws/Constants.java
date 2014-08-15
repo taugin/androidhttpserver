@@ -54,5 +54,6 @@ public final class Constants {
     public static final int OP_STOP_WEBSERVER = 1;
     public static final int OP_START_DNSSERVER = 2;
     public static final int OP_STOP_DNSSERVER = 3;
+    public static final int OP_QUERY_WEBSERVER = 4;
     public static final String REDIRECT_STARTED = "redirect_started";
 }

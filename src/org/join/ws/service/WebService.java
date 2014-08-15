@@ -105,8 +105,8 @@ public class WebService extends Service implements OnWebServListener {
 
     @Override
     public void onDestroy() {
-        closeDnsServer();
-        closeWebServer();
+        //closeDnsServer();
+        //closeWebServer();
         super.onDestroy();
     }
 
@@ -209,6 +209,7 @@ public class WebService extends Service implements OnWebServListener {
         Log.d(Log.TAG, "WebService intent = " + intent);
         if (intent != null) {
             int op = intent.getIntExtra("op", -1);
+            Log.d(Log.TAG, "WebService op = " + op);
             if (op == Constants.OP_START_DNSSERVER) {
                 openDnsServer();
             } else if (op == Constants.OP_STOP_DNSSERVER) {
@@ -217,6 +218,8 @@ public class WebService extends Service implements OnWebServListener {
                 openWebServer();
             } else if (op == Constants.OP_STOP_WEBSERVER) {
                 closeWebServer();
+            } else if (op == Constants.OP_QUERY_WEBSERVER) {
+                onWebServerState();
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -247,6 +250,11 @@ public class WebService extends Service implements OnWebServListener {
     private void onWebServerError(int code) {
         Intent intent = new Intent(WSReceiver.ACTION_WEBSERVER_ERROR);
         intent.putExtra("error_code", code);
+        sendBroadcast(intent, WSReceiver.PERMIT_WS_RECEIVER);
+    }
+    private void onWebServerState() {
+        Intent intent = new Intent(WSReceiver.ACTION_WEBSERVER_RUNNING);
+        intent.putExtra("server_running", isRunning());
         sendBroadcast(intent, WSReceiver.PERMIT_WS_RECEIVER);
     }
 }
