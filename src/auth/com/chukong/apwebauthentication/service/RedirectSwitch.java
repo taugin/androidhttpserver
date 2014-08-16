@@ -33,8 +33,33 @@ public class RedirectSwitch {
 
     public boolean setRedirectState(boolean redirect) {
         String script = null;
+        String addr = null;
+        int count = 0;
+        do {
+            addr = CommonUtil.getLocalIpAddress();
+            count++;
+            if (addr == null) {
+                try {
+                    Log.d(Log.TAG, "sleep 500ms-------------------------------------------------------");
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } while(addr == null && count < 3);
+        if (addr == null) {
+            return false;
+        }
+        int lastIndex = addr.lastIndexOf(".");
+        if (lastIndex == -1) {
+            return false;
+        }
+        String tmpAddr = addr.substring(0, lastIndex);
+        Log.d(Log.TAG, "tmpAddr = " + tmpAddr + " , count = " + count);
+        String subNet = tmpAddr + ".0/24";
+        Log.d(Log.TAG, "subNet = " + subNet);
         if (redirect) {
-            script = IptableSet.generateClearIpRule() + IptableSet.generateIpCheckRule();
+            script = IptableSet.generateClearIpRule() + IptableSet.generateIpCheckRule(subNet);
         } else {
             script = IptableSet.generateClearIpRule();
         }

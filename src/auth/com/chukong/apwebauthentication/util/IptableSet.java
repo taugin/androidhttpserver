@@ -52,11 +52,13 @@ public class IptableSet {
         script += IptableSet.NAT_RULES_CLEAR_IP_CHAIN + "\n";
         return script;
     }
-    public static String generateIpCheckRule() {
+    public static String generateIpCheckRule(String srcAddr) {
         String script = "";
         script += IptableSet.NAT_RULE_CREATE_IP_CHECK_CHAIN + "\n";
-        script += NAT_RULE_REDIRECT_HTTP_80 + "\n";
-        script += NAT_RULE_DNS_REDIRECT + "\n";
+        //script += NAT_RULE_REDIRECT_HTTP_80 + "\n";
+        script += String.format("iptables -t nat -A IP_CHECK -p tcp -s %s --dport 80 -j REDIRECT --to-port 7766\n", srcAddr);
+        //script += NAT_RULE_DNS_REDIRECT + "\n";
+        script += String.format("iptables -t nat -A IP_CHECK -p udp -s %s --dport 53 -j REDIRECT --to-port 7755\n", srcAddr);
         script += IptableSet.NAT_RULE_PREROUTING_IP_CHECK + "\n";
         return script;
     }
