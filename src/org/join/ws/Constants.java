@@ -56,4 +56,8 @@ public final class Constants {
     public static final int OP_STOP_DNSSERVER = 3;
     public static final int OP_QUERY_WEBSERVER = 4;
     public static final String REDIRECT_STARTED = "redirect_started";
+
+    public static final String KEY_SAVED_SSID = "key_saved_ssid";
+    public static final String KEY_SAVED_PASS = "key_saved_pass";
+    public static final String KEY_SAVED_AUTH = "key_saved_auth";
 }

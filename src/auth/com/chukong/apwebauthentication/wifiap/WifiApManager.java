@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiConfiguration.AuthAlgorithm;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
@@ -174,5 +175,62 @@ public class WifiApManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public int getAuth(WifiConfiguration config) {
+        for (int a = 0; a < config.allowedAuthAlgorithms.size(); a++) {
+            if (config.allowedAuthAlgorithms.get(a)) {
+                return a;
+            }
+        }
+        return 0;
+    }
+
+    public WifiConfiguration createWifiInfo(String SSID, String password, int type) {
+        Log.v(Log.TAG, "SSID = " + SSID + "## Password = " + password + "## Type = " + type);
+
+        WifiConfiguration config = new WifiConfiguration();
+        config.allowedAuthAlgorithms.clear();
+        config.allowedGroupCiphers.clear();
+        config.allowedKeyManagement.clear();
+        config.allowedPairwiseCiphers.clear();
+        config.allowedProtocols.clear();
+        config.SSID = SSID;
+/*
+        WifiConfiguration tempConfig = this.IsExsits(SSID);
+        if (tempConfig != null) {
+            mWifiManager.removeNetwork(tempConfig.networkId);
+        }
+*/
+        // 分为三种情况：1没有密码2用wep加密3用wpa加密
+        if (type == -1) {// WIFICIPHER_NOPASS
+            config.wepKeys[0] = "";
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+        } else if (type == 1) {  //  WIFICIPHER_WEP
+            config.hiddenSSID = true;
+            config.wepKeys[0] = password;
+            config.allowedAuthAlgorithms
+                    .set(WifiConfiguration.AuthAlgorithm.SHARED);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+        } else if (type == 0) {   // WIFICIPHER_WPA
+            config.preSharedKey = password;
+            config.hiddenSSID = true;
+            config.allowedAuthAlgorithms
+                    .set(WifiConfiguration.AuthAlgorithm.OPEN);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+            config.status = WifiConfiguration.Status.ENABLED;
+        }
+        return config;
     }
 }

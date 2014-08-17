@@ -15,20 +15,18 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -367,7 +365,27 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     }
 
     private void setWifiApEnabled(boolean enabled) {
-        WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
+        if (enabled) {
+            WifiConfiguration oldConfig = WifiApManager.getInstance(this).getWifiApConfiguration();
+            Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++oldConfig.SSID = " + oldConfig.SSID + " , oldConfig.preShareKey = " + oldConfig.preSharedKey);
+            editor.putString(Constants.KEY_SAVED_SSID, oldConfig.SSID);
+            editor.putString(Constants.KEY_SAVED_PASS, oldConfig.preSharedKey);
+            editor.putInt(Constants.KEY_SAVED_AUTH, WifiApManager.getInstance(this).getAuth(oldConfig));
+            editor.apply();
+            String SSID = "Chukong-Share";
+            WifiConfiguration config = WifiApManager.getInstance(this).createWifiInfo(SSID, null, -1);
+            WifiApManager.getInstance(this).setWifiApConfiguration(config);
+            WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
+        } else {
+            String SSID = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.KEY_SAVED_SSID, null);
+            String pass = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.KEY_SAVED_PASS, null);
+            int auth = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.KEY_SAVED_AUTH, 0);
+            WifiConfiguration config = WifiApManager.getInstance(this).createWifiInfo(SSID, pass, auth);
+            Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++ssid = " + SSID + " , preSharedKey = " + pass);
+            WifiApManager.getInstance(this).setWifiApConfiguration(config);
+            WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
+        }
     }
 
     @Override
