@@ -2,6 +2,7 @@ package org.join.ws.serv.req;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URLDecoder;
@@ -37,6 +38,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -78,7 +80,7 @@ public class HttpFBHandler implements HttpRequestHandler {
         File file;
         if (target.equals("/view.html")) {
             file = new File(this.webRoot);
-        } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot)) {
+        } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot) && !target.startsWith("/data/app")) {
             String ip = mCommonUtil.getLocalIpAddress();
             String localHost = ip + ":7766";
             Log.d(Log.TAG, "localHost = " + (localHost) + " , requestMethod = " + requestMethod);
@@ -181,6 +183,41 @@ public class HttpFBHandler implements HttpRequestHandler {
         }
         return twoColumns;
     }
+    private File[] getFileFromDataApp() {
+        Context context = WSApplication.getInstance().getBaseContext();
+        PackageManager pm = context.getPackageManager();
+        if (pm == null) {
+            return null;
+        }
+        List<ApplicationInfo> apps = pm.getInstalledApplications(0);
+        if (apps == null) {
+            return null;
+        }
+        List<File> appFiles = new ArrayList<File>();
+        File file = null;
+        for (ApplicationInfo info : apps) {
+            file = new File(info.publicSourceDir);
+            appFiles.add(file);
+        }
+        return appFiles.toArray(new File[apps.size()]);
+    }
+    private File getThisAppFile() {
+        Context context = WSApplication.getInstance().getBaseContext();
+        PackageManager pm = context.getPackageManager();
+        if (pm == null) {
+            return null;
+        }
+        ApplicationInfo info = null;
+        try {
+            info = pm.getApplicationInfo("org.join.web.serv", 0);
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (info != null && info.publicSourceDir != null) {
+            return new File(info.publicSourceDir);
+        }
+        return null;
+    }
     private List<FileRow> buildFileRows(File dir) {
         File[] files = dir.listFiles(); // 目录列表
         if (files != null) {
@@ -188,6 +225,17 @@ public class HttpFBHandler implements HttpRequestHandler {
             ArrayList<FileRow> fileRows = new ArrayList<FileRow>();
             for (File file : files) {
                 fileRows.add(buildFileRow(file));
+            }
+            /*
+            File appFiles[] = getFileFromDataApp();
+            sort(appFiles);
+            for (File file : appFiles) {
+                fileRows.add(buildFileRow(file));
+            }
+            */
+            File thisFile = getThisAppFile();
+            if (thisFile != null) {
+                fileRows.add(0, buildFileRow(thisFile));
             }
             return fileRows;
         }
