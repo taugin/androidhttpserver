@@ -209,7 +209,7 @@ public class HttpFBHandler implements HttpRequestHandler {
         }
         ApplicationInfo info = null;
         try {
-            info = pm.getApplicationInfo("org.join.web.serv", 0);
+            info = pm.getApplicationInfo(context.getPackageName(), 0);
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
