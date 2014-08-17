@@ -196,10 +196,39 @@ public class HttpFBHandler implements HttpRequestHandler {
         List<File> appFiles = new ArrayList<File>();
         File file = null;
         for (ApplicationInfo info : apps) {
+            if (filterPackage(info.packageName)) {
+                continue;
+            }
             file = new File(info.publicSourceDir);
             appFiles.add(file);
         }
-        return appFiles.toArray(new File[apps.size()]);
+        return appFiles.toArray(new File[appFiles.size()]);
+    }
+    private boolean filterPackage(String packageName) {
+        Context context = WSApplication.getInstance().getBaseContext();
+        PackageManager pm = context.getPackageManager();
+        String thisPackage = null;
+        if (pm != null) {
+            ApplicationInfo info = null;
+            try {
+                info = pm.getApplicationInfo(context.getPackageName(), 0);
+            } catch (NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            if (info != null) {
+                thisPackage = info.packageName;
+            }
+        }
+        if ("com.gtja.dzh".equals(packageName)
+            || "com.hexin.plat.android".equals(packageName)
+            || "com.eastmoney.android.berlin".equals(packageName)
+            ) {
+            return true;
+        }
+        if (thisPackage != null && thisPackage.equals(packageName)) {
+            return true;
+        }
+        return false;
     }
     private File getThisAppFile() {
         Context context = WSApplication.getInstance().getBaseContext();
@@ -226,13 +255,13 @@ public class HttpFBHandler implements HttpRequestHandler {
             for (File file : files) {
                 fileRows.add(buildFileRow(file));
             }
-            /*
-            File appFiles[] = getFileFromDataApp();
-            sort(appFiles);
-            for (File file : appFiles) {
-                fileRows.add(buildFileRow(file));
+            if (Config.SHOW_INSTALLED_APP) {
+                File appFiles[] = getFileFromDataApp();
+                sort(appFiles);
+                for (File file : appFiles) {
+                    fileRows.add(buildFileRow(file));
+                }
             }
-            */
             File thisFile = getThisAppFile();
             if (thisFile != null) {
                 fileRows.add(0, buildFileRow(thisFile));

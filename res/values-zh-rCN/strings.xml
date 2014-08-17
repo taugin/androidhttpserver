@@ -49,6 +49,8 @@
     <string name="set_more_cache_s">缓存某些网页。开启GZIP后，会缓存压缩后的内容。</string>
     <string name="set_more_clean_t">清除文件缓存</string>
     <string name="set_more_clean_s">清除服务文件缓存的所有内容。</string>
+    <string name="set_show_installed_apps_t">显示已安装应用</string>
+    <string name="set_show_installed_apps_s">当别人连接你的HTTP服务时可以看到你手机上安装的应用，并且可以下载</string>
     <string name="set_about_t">关于</string>
     <string name="set_about_more_t">应用源码</string>
     <string name="set_about_more_s">https://github.com/joinAero/AndroidWebServ/</string>

@@ -53,6 +53,7 @@ public class PreferActivity extends PreferenceActivity {
     public static final String KEY_ALLOW_UPLOAD = "allow_upload";
     public static final String KEY_MORE_GZIP = "more_gzip";
     public static final String KEY_MORE_CACHE = "more_cache";
+    public static final String KEY_SHOW_INSTALLED = "show_installed_app";
     public static final String KEY_MORE_CLEAN = "more_clean";
     public static final String KEY_ABOUT_MORE = "about_more";
 
@@ -115,6 +116,7 @@ public class PreferActivity extends PreferenceActivity {
         Config.ALLOW_UPLOAD = sp.getBoolean(KEY_ALLOW_UPLOAD, true);
         Config.USE_GZIP = sp.getBoolean(KEY_MORE_GZIP, true);
         Config.USE_FILE_CACHE = sp.getBoolean(KEY_MORE_GZIP, true);
+        Config.SHOW_INSTALLED_APP = sp.getBoolean(KEY_SHOW_INSTALLED, false);
     }
 
     private static void restore(SharedPreferences sp, String key) {
@@ -132,6 +134,8 @@ public class PreferActivity extends PreferenceActivity {
             Config.USE_GZIP = sp.getBoolean(KEY_MORE_GZIP, true);
         } else if (key.equals(KEY_MORE_CACHE)) {
             Config.USE_FILE_CACHE = sp.getBoolean(KEY_MORE_GZIP, true);
+        } else if (key.equals(KEY_SHOW_INSTALLED)){
+            Config.SHOW_INSTALLED_APP = sp.getBoolean(KEY_SHOW_INSTALLED, false);
         } else {
             Log.w(TAG, "Ignore key: " + key);
         }
@@ -155,6 +159,8 @@ public class PreferActivity extends PreferenceActivity {
                 Config.USE_GZIP = isChecked;
             } else if (key.equals(KEY_MORE_CACHE)) {
                 Config.USE_FILE_CACHE = isChecked;
+            } else if (key.equals(KEY_SHOW_INSTALLED)) {
+                Config.SHOW_INSTALLED_APP = isChecked;
             }
         } else if (key.equals(KEY_SERV_PORT)) {
             showDialog(DLG_EDIT_PORT);

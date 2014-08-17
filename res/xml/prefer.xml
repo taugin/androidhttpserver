@@ -59,6 +59,12 @@
             android:summary="@string/set_more_clean_s"
             android:title="@string/set_more_clean_t"
             android:widgetLayout="@layout/prefer_widget_wait" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="show_installed_app"
+            android:summary="@string/set_show_installed_apps_s"
+            android:title="@string/set_show_installed_apps_t"
+            android:widgetLayout="@layout/prefer_widget_checkbox" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/set_about_t" >
         <Preference
