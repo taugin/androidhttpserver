@@ -264,6 +264,7 @@ public class HttpFBHandler implements HttpRequestHandler {
             }
             File thisFile = getThisAppFile();
             if (thisFile != null) {
+                Log.d(Log.TAG, "thisFile = " + thisFile);
                 fileRows.add(0, buildFileRow(thisFile));
             }
             return fileRows;
