@@ -269,7 +269,7 @@ public class HttpFBHandler implements HttpRequestHandler {
         row.time = sdf.format(new Date(f.lastModified()));
         if (f.canRead()) {
             row.can_browse = true;
-            if (Config.ALLOW_DOWNLOAD) {
+            if (Config.ALLOW_DOWNLOAD && f.isFile()) {
                 row.can_download = true;
             }
             if (f.canWrite()) {
