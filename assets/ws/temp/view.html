@@ -4,7 +4,7 @@
 {% block style %}
     <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/wsf.view.css">
 	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/colorbox.css">
-	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/style.css">
+	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/temp.css">
     <script>
         var MSG = {
             'tip': '{% rstr v_tip %}',
@@ -29,8 +29,7 @@
 				{% if col %}
 					<div class="gctop">
 						<div class="gamesingle gmtopleft">
-							<!--img src="http://img.ucenter.appget.cn/download?v=1&f=MyGroup/M00/00/14/CgoMRlN_78OAY39WAAGX80jzarA7028538" alt="" class="gmicon fl"/-->
-							<a class="gmicon fl"><img src="data:image/png;base64,{{col.icon}}" alt="" /></a>
+							{% if col.icon %}<a class="gmicon fl"><img src="data:image/png;base64,{{col.icon}}" alt="" /></a>{% endif %}
 							<div class="gmdes fl">
 								<h6><a href="{{ col.link }}">{{ col.name }}</a></h6>
 								<p>集合众多日系手游要素的经典RPG手游</p>

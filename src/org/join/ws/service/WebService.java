@@ -44,7 +44,6 @@ public class WebService extends Service implements OnWebServListener {
     private Timer mTimer = new Timer(true);
     private TimerTask resetTask;
 
-    private WebServer webServer;
     private OnWebServListener mListener;
 
     private boolean isRunning = false;
@@ -53,8 +52,8 @@ public class WebService extends Service implements OnWebServListener {
 
     private int NOTI_SERV_RUNNING = R.string.noti_serv_running;
 
-    private UDPSocketMonitor uDPSocketMonitor;
-
+    private static final String WEB_SERVER = "web_server";
+    private static final String DNS_SERVER = "dns_server";
     private HashMap<String, Object> mStartedServer = null;
 
     private LocalBinder mBinder = new LocalBinder();
@@ -85,13 +84,11 @@ public class WebService extends Service implements OnWebServListener {
     }
 
     private void openWebServer() {
-        if (webServer == null) {
-            webServer = new WebServer(Config.PORT, Config.WEBROOT);
-            webServer.setOnWebServListener(this);
-            webServer.setDaemon(true);
-            webServer.start();
-            mStartedServer.put("webserver", webServer);
-        }
+        WebServer webServer = new WebServer(Config.PORT, Config.WEBROOT);
+        mStartedServer.put(WEB_SERVER, webServer);
+        webServer.setOnWebServListener(this);
+        webServer.setDaemon(true);
+        webServer.start();
     }
 
     @Override
@@ -102,8 +99,8 @@ public class WebService extends Service implements OnWebServListener {
     }
 
     private void closeWebServer() {
+        WebServer webServer = (WebServer) mStartedServer.remove(WEB_SERVER);
         if (webServer != null) {
-            mStartedServer.remove("webserver");
             webServer.close();
             webServer = null;
         }
@@ -235,16 +232,14 @@ public class WebService extends Service implements OnWebServListener {
     }
 
     public void openDnsServer() {
-        if (uDPSocketMonitor == null) {
-            String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
-            uDPSocketMonitor = new UDPSocketMonitor(localAddress, 7755);
-            uDPSocketMonitor.start();
-            mStartedServer.put("dnsserver", uDPSocketMonitor);
-        }
+        String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
+        UDPSocketMonitor uDPSocketMonitor = new UDPSocketMonitor(localAddress, 7755);
+        mStartedServer.put(DNS_SERVER, uDPSocketMonitor);
+        uDPSocketMonitor.start();
     }
     public void closeDnsServer() {
+        UDPSocketMonitor uDPSocketMonitor = (UDPSocketMonitor) mStartedServer.remove(DNS_SERVER);
         if (uDPSocketMonitor != null) {
-            mStartedServer.remove("dnsserver");
             uDPSocketMonitor.close();
             uDPSocketMonitor = null;
         }

@@ -275,7 +275,7 @@ public class CommonUtil {
         File suFile = null;
         for (String path : ENV_PATH) {
             suFile = new File(path + "/su");
-            Log.d(Log.TAG, "suFile = " + suFile + " , exist = " + suFile.exists());
+            // Log.d(Log.TAG, "suFile = " + suFile + " , exist = " + suFile.exists());
             if (suFile.exists()) {
                 return true;
             }
