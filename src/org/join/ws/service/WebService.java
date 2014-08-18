@@ -1,5 +1,6 @@
 package org.join.ws.service;
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -53,6 +54,9 @@ public class WebService extends Service implements OnWebServListener {
     private int NOTI_SERV_RUNNING = R.string.noti_serv_running;
 
     private UDPSocketMonitor uDPSocketMonitor;
+
+    private HashMap<String, Object> mStartedServer = null;
+
     private LocalBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
@@ -69,7 +73,7 @@ public class WebService extends Service implements OnWebServListener {
                     String.format("create server: port=%d, root=%s", Config.PORT, Config.WEBROOT));
         String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
         Log.d("taugin", "localAddress = " + localAddress);
-
+        mStartedServer = new HashMap<String, Object>();
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -86,6 +90,7 @@ public class WebService extends Service implements OnWebServListener {
             webServer.setOnWebServListener(this);
             webServer.setDaemon(true);
             webServer.start();
+            mStartedServer.put("webserver", webServer);
         }
     }
 
@@ -98,15 +103,19 @@ public class WebService extends Service implements OnWebServListener {
 
     private void closeWebServer() {
         if (webServer != null) {
+            mStartedServer.remove("webserver");
             webServer.close();
             webServer = null;
+        }
+        if (mStartedServer.size() <= 0) {
+            stopSelf();
         }
     }
 
     @Override
     public void onDestroy() {
-        //closeDnsServer();
-        //closeWebServer();
+        Log.d(Log.TAG, "mStartedServer size = " + mStartedServer.size());
+        mStartedServer = null;
         super.onDestroy();
     }
 
@@ -222,7 +231,7 @@ public class WebService extends Service implements OnWebServListener {
                 onWebServerState();
             }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     public void openDnsServer() {
@@ -230,12 +239,17 @@ public class WebService extends Service implements OnWebServListener {
             String localAddress = CommonUtil.getSingleton().getLocalIpAddress();
             uDPSocketMonitor = new UDPSocketMonitor(localAddress, 7755);
             uDPSocketMonitor.start();
+            mStartedServer.put("dnsserver", uDPSocketMonitor);
         }
     }
     public void closeDnsServer() {
         if (uDPSocketMonitor != null) {
+            mStartedServer.remove("dnsserver");
             uDPSocketMonitor.close();
             uDPSocketMonitor = null;
+        }
+        if (mStartedServer.size() <= 0) {
+            stopSelf();
         }
     }
 
