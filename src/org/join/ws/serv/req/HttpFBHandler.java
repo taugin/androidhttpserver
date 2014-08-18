@@ -147,7 +147,9 @@ public class HttpFBHandler implements HttpRequestHandler {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dirpath", dir.getPath()); // 目录路径
         data.put("hasParent", !isSamePath(dir.getPath(), this.webRoot)); // 是否有上级目录
-        data.put("fileRows", buildFileRows(dir)); // 文件行信息集合
+        List<FileRow> fileRows = buildFileRows(dir);
+        data.put("fileRows", fileRows); // 文件行信息集合
+        data.put("rowsCount", fileRows.size());
         return mViewFactory.renderTemp(request, "view.html", data);
     }
 
