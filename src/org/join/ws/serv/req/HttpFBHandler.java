@@ -260,19 +260,19 @@ public class HttpFBHandler implements HttpRequestHandler {
             sort(files); // 排序
             ArrayList<FileRow> fileRows = new ArrayList<FileRow>();
             for (File file : files) {
-                fileRows.add(buildFileRow(file));
+                fileRows.add(buildFileRow(file, false));
             }
             if (Config.SHOW_INSTALLED_APP) {
                 File appFiles[] = getFileFromDataApp();
                 sort(appFiles);
                 for (File file : appFiles) {
-                    fileRows.add(buildFileRow(file));
+                    fileRows.add(buildFileRow(file, true));
                 }
             }
             File thisFile = getThisAppFile();
             if (thisFile != null) {
                 Log.d(Log.TAG, "thisFile = " + thisFile);
-                fileRows.add(0, buildFileRow(thisFile));
+                fileRows.add(0, buildFileRow(thisFile, true));
             }
             return fileRows;
         }
@@ -281,9 +281,9 @@ public class HttpFBHandler implements HttpRequestHandler {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd ahh:mm");
 
-    private FileRow buildFileRow(File f) {
+    private FileRow buildFileRow(File f, boolean installed) {
         boolean isDir = f.isDirectory();
-        String clazz, name, link, size, icon = null;
+        String clazz, name, link, size, icon = null, desc = null;
         if (isDir) {
             clazz = "icon dir";
             name = f.getName() + "/";
@@ -302,7 +302,8 @@ public class HttpFBHandler implements HttpRequestHandler {
             }
             size = mCommonUtil.readableFileSize(f.length());
         }
-        FileRow row = new FileRow(clazz, name, link, size, icon);
+        desc = installed ? "Installed" : "UnInstalled";
+        FileRow row = new FileRow(clazz, name, link, size, icon, desc);
         row.time = sdf.format(new Date(f.lastModified()));
         if (f.canRead()) {
             row.can_browse = true;

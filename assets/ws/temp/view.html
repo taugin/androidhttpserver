@@ -4,7 +4,7 @@
 {% block style %}
     <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/wsf.view.css">
     <!--link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/colorbox.css"-->
-    <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/temp.css">
+    <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/style.css">
     <script>
         var MSG = {
             'tip': '{% rstr v_tip %}',
@@ -31,7 +31,7 @@
 							{% if col.icon %}<a class="gmicon fl"><img src="data:image/png;base64,{{col.icon}}" alt="" /></a>{% endif %}
 							<div class="gmdes fl">
 								<h6><a href="{{ col.link }}">{{ col.name }}</a></h6>
-								<p>集合众多日系手游要素的经典RPG手游</p>
+								{% if col.desc %}<p>{{col.desc}}</p>{% endif %}
 								{% if col.can_download %}<div><a href="/download{{ col.link }}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.size }}</div>{% endif %}
 							</div>
 						</div>
