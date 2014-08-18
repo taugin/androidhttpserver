@@ -196,7 +196,7 @@ public class HttpFBHandler implements HttpRequestHandler {
         List<File> appFiles = new ArrayList<File>();
         File file = null;
         for (ApplicationInfo info : apps) {
-            if (filterPackage(info.packageName)) {
+            if (filterPackage(info)) {
                 continue;
             }
             file = new File(info.publicSourceDir);
@@ -204,7 +204,14 @@ public class HttpFBHandler implements HttpRequestHandler {
         }
         return appFiles.toArray(new File[appFiles.size()]);
     }
-    private boolean filterPackage(String packageName) {
+    private boolean filterPackage(ApplicationInfo filterInfo) {
+        if (filterInfo == null) {
+            return true;
+        }
+        if ((filterInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+            return true;
+        }
+        String packageName = filterInfo.packageName;
         Context context = WSApplication.getInstance().getBaseContext();
         PackageManager pm = context.getPackageManager();
         String thisPackage = null;
