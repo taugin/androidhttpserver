@@ -82,18 +82,18 @@ public class HttpFBHandler implements HttpRequestHandler {
             file = new File(this.webRoot);
         } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot) && !target.startsWith("/data/app")) {
             String ip = mCommonUtil.getLocalIpAddress();
-            String localHost = ip + ":7766";
+            int port  = Config.PORT;
+            String localHost = ip + ":" + port;
             Log.d(Log.TAG, "localHost = " + (localHost) + " , requestMethod = " + requestMethod);
             if ((localHost != null && localHost.equals(requestHost)) || (requestMethod != null && requestMethod.equalsIgnoreCase("POST"))) {
                 response.setStatusCode(HttpStatus.SC_FORBIDDEN);
                 response.setEntity(resp403(request));
             } else {
                 response.setStatusCode(301);
-                int port  = Config.PORT;
                 if (!TextUtils.isEmpty(ip)) {
                     ip = ip + ":" + port;
                 } else {
-                    ip = "http://10.0.0.115:7766";
+                    ip = "http://10.0.0.115:"  + port;
                 }
                 if (!ip.startsWith("http")) {
                     ip = "http://" + ip;
