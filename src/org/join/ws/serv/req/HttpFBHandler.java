@@ -248,7 +248,7 @@ public class HttpFBHandler implements HttpRequestHandler {
         return null;
     }
     private List<FileRow> buildFileRows(File dir) {
-        File[] files = dir.listFiles(); // 目录列表
+        File[] files = dir.listFiles(mFilter); // 目录列表
         if (files != null) {
             sort(files); // 排序
             ArrayList<FileRow> fileRows = new ArrayList<FileRow>();
@@ -382,6 +382,16 @@ public class HttpFBHandler implements HttpRequestHandler {
         });
     }
 
+    private FileFilter mFilter = new FileFilter() {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.getName().endsWith(".apk")) {
+                return true;
+            }
+            return false;
+        }
+    };
     private void printRequest(HttpRequest request) {
         Header headers[] = request.getAllHeaders();
         for (Header h : headers) {

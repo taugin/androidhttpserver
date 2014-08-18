@@ -3,8 +3,8 @@
 
 {% block style %}
     <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/wsf.view.css">
-	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/colorbox.css">
-	<link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/temp.css">
+    <!--link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/colorbox.css"-->
+    <link rel="stylesheet" href="{{ SERV_ROOT_DIR }}css/temp.css">
     <script>
         var MSG = {
             'tip': '{% rstr v_tip %}',
@@ -19,11 +19,10 @@
 {% block body %}
     {% include "confirm.html" %}
     <p>&nbsp;</p>
-        <div >
-            <h4>coco合作游戏</h4>
+        <div style=" margin: 0 auto; margin-top: 25px; text-align: center;   line-height: 40px">
+            <h4 style="font-size: 30px;">coco合作游戏</h4>
         </div>
-        <!--div class="fl homegame"-->
-		<div class="fl homegame">
+		<div class="homegame">
         {% if fileRows %}
             {% for col in fileRows %}
 				{% if col %}
