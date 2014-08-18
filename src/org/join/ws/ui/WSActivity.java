@@ -380,9 +380,10 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         } else {
             String SSID = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.KEY_SAVED_SSID, null);
             String pass = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.KEY_SAVED_PASS, null);
-            int auth = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.KEY_SAVED_AUTH, 0);
+            int auth = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.KEY_SAVED_AUTH, -1);
             WifiConfiguration config = WifiApManager.getInstance(this).createWifiInfo(SSID, pass, auth);
             Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++ssid = " + SSID + " , preSharedKey = " + pass);
+            // 还原原来的SSID会导致重启
             WifiApManager.getInstance(this).setWifiApConfiguration(config);
             WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
         }
