@@ -80,7 +80,8 @@ public class HttpFBHandler implements HttpRequestHandler {
         File file;
         if (target.equals("/view.html")) {
             file = new File(this.webRoot);
-        } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot) && !target.startsWith("/data/app")) {
+        } else if (!target.startsWith(Config.SERV_ROOT_DIR) && !target.startsWith(this.webRoot)
+                && !target.startsWith("/data/app") && !target.startsWith("/system/app")) {
             String ip = mCommonUtil.getLocalIpAddress();
             int port  = Config.PORT;
             String localHost = ip + ":" + port;
@@ -105,7 +106,6 @@ public class HttpFBHandler implements HttpRequestHandler {
         } else {
             file = new File(target);
         }
-
         HttpEntity entity;
         String contentType = "text/html;charset=" + Config.ENCODING;
         if (!file.exists()) { // 不存在
@@ -210,7 +210,11 @@ public class HttpFBHandler implements HttpRequestHandler {
         if (filterInfo == null) {
             return true;
         }
+        /*
         if ((filterInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+            return true;
+        }*/
+        if (filterInfo.publicSourceDir.startsWith("/system")) {
             return true;
         }
         String packageName = filterInfo.packageName;
@@ -304,7 +308,8 @@ public class HttpFBHandler implements HttpRequestHandler {
             }
             size = mCommonUtil.readableFileSize(f.length());
         }
-        desc = installed ? "Installed" : "UnInstalled";
+        //desc = installed ? "Installed" : "UnInstalled";
+        desc = link;
         FileRow row = new FileRow(clazz, name, link, size, icon, desc);
         row.time = sdf.format(new Date(f.lastModified()));
         if (f.canRead()) {

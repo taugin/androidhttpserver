@@ -49,6 +49,8 @@
     <string name="set_more_cache_s">Cache some webpages. If using GZIP, will also cache compressed content.</string>
     <string name="set_more_clean_t">Clean file cache</string>
     <string name="set_more_clean_s">Clean all server file cache.</string>
+    <string name="set_show_installed_apps_t">Show installed apps</string>
+    <string name="set_show_installed_apps_s">Others can download your app when connected to your server.</string>
     <string name="set_about_t">About</string>
     <string name="set_about_more_t">App Source</string>
     <string name="set_about_more_s">https://github.com/joinAero/AndroidWebServ/</string>
