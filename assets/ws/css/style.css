@@ -7,7 +7,7 @@ a {text-decoration:none}
 
 .gmdes div {color:#191400;line-height:38px}
 .gamesall li div {padding:5px 20px 0 10px;width:108px}
-.gamesall li div h6 a, .gamesall li div h4 a {color:#191400;font-size:16px;line-height:1.8}
+.gamesall li div h6 a, .gamesall li div h4 a {color:#191400;font-size:16px;line-height:1.8;overflow:hidden}
 .gamesall li div p {color:#57595c;font-size:14px;line-height:1.6;height:44px;overflow:hidden}
 .gamesall li div h4 {padding-top:0px}
 
@@ -18,7 +18,7 @@ a {text-decoration:none}
 .cr {clear:right}
 
 /*.homegame {width:754px;padding-left:2px;min-height:200px;margin: 0 auto}*/
-.homegame {width:100%;padding-left:0px;min-height:200px;margin: 0 auto}
+.homegame {width:367px;padding-left:0px;min-height:200px;margin: 0 auto}
 .gmtopleft {background:url(../img/gmtopleft.png) no-repeat}
 
 .gctop {margin-top:-10px}
@@ -37,7 +37,7 @@ a {text-decoration:none}
 .gmdes {width:215px;margin-left:0px}
 .gmdes h6 {padding:8px 0 10px}
 .gmdes h6 a {color:#191400;font-size:18px}
-.gmdes p {color:#191400;line-height:1.6;height:38px;}
+.gmdes p {color:#191400;line-height:1.6;height:38px;word-break:break-all;}
 .gmdes div {color:#191400;line-height:38px}
 
 .homebtn, .btnshome {background:url(../img/topnav-cur.png) 0 -148px no-repeat;display:inline-block; vertical-align:middle;width:104px;height:40px;color:#1164de;font-size:14px;text-align:center;line-height:40px}

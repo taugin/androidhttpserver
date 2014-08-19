@@ -158,7 +158,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtn = (ToggleButton) findViewById(R.id.toggleBtn);
         toggleBtn.setOnClickListener(this);
         urlText = (TextView) findViewById(R.id.urlText);
-		qrCodeView = (ImageView) findViewById(R.id.qrCodeView);
+        qrCodeView = (ImageView) findViewById(R.id.qrCodeView);
         wifiApText = (TextView) findViewById(R.id.wifiApssid);
 
         toggleBtnAp = (ToggleButton) findViewById(R.id.toggleBtnAp);

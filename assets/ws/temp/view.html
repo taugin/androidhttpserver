@@ -22,11 +22,11 @@
         <div style=" margin: 0 auto; margin-top: 25px; text-align: center;   line-height: 40px">
             <h4 style="font-size: 30px;">coco合作游戏</h4>
         </div>
+		<div class="homegame">
 		<div style=" margin: 0 auto; margin-top: 25px; margin-left: 10px; text-align: left;   line-height: 40px">
             <h4 style="font-size: 20px;">Total : {{ rowsCount }}</h4>
         </div>
 		<hr color="000000" style="margin: 0px 10px 0px 10px">
-		<div class="homegame">
         {% if fileRows %}
             {% for col in fileRows %}
 				{% if col %}
@@ -34,7 +34,7 @@
 						<div class="gamesingle gmtopleft">
 							{% if col.icon %}<a class="gmicon fl"><img src="data:image/png;base64,{{col.icon}}" alt="" /></a>{% endif %}
 							<div class="gmdes fl">
-								<h6><a href="{{ col.link }}">{{ col.name }}</a></h6>
+								<h6 class="fl"><a href="{{ col.link }}">{{ col.name }}</a></h6>
 								{% if col.desc %}<p>{{col.desc}}</p>{% endif %}
 								{% if col.can_download %}<div><a href="/download{{ col.link }}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.size }}</div>{% endif %}
 							</div>
