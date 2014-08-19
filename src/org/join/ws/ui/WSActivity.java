@@ -447,16 +447,6 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         }
     }
 
-    @Override
-    public void onWebServerStart() {
-        mHandler.sendEmptyMessage(W_START);
-    }
-
-    @Override
-    public void onWebServerStop() {
-        mHandler.sendEmptyMessage(W_STOP);
-    }
-
     private void generateQRCode(String text) {
         Intent intent = new Intent(Intents.Encode.ACTION);
         intent.putExtra(Intents.Encode.FORMAT, BarcodeFormat.QR_CODE.toString());
@@ -484,6 +474,17 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         dimension = dimension * 3 / 4;
         return dimension;
     }
+
+    @Override
+    public void onWebServerStart() {
+        mHandler.sendEmptyMessage(W_START);
+    }
+
+    @Override
+    public void onWebServerStop() {
+        mHandler.sendEmptyMessage(W_STOP);
+    }
+
     @Override
     public void onWebServerError(int code) {
         Message msg = mHandler.obtainMessage(W_ERROR);
@@ -495,5 +496,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     public void onWebServerRunning(boolean isRunning) {
         Log.d(Log.TAG, "isRunning = " + isRunning);
         toggleBtn.setChecked(isRunning);
+        ipAddr = mCommonUtil.getLocalIpAddress();
+        mHandler.sendEmptyMessage(isRunning ? W_START : W_STOP);
     }
 }

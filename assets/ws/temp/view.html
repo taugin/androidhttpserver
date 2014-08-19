@@ -34,7 +34,7 @@
 						<div class="gamesingle gmtopleft">
 							{% if col.icon %}<a class="gmicon fl"><img src="data:image/png;base64,{{col.icon}}" alt="" /></a>{% endif %}
 							<div class="gmdes fl">
-								<h6 class="fl"><a href="{{ col.link }}">{{ col.name }}</a></h6>
+								<h6><a href="{{ col.link }}">{{ col.name }}</a></h6>
 								{% if col.desc %}<p>{{col.desc}}</p>{% endif %}
 								{% if col.can_download %}<div><a href="/download{{ col.link }}" class="homebtn fr">{% rstr v_download %}</a>{% rstr v_size %} : {{ col.size }}</div>{% endif %}
 							</div>

@@ -132,7 +132,8 @@ public class WebService extends Service implements OnWebServListener {
     public void onStopped() {
         if (DEBUG)
             Log.d(TAG, "onStopped");
-        mNM.cancel(NOTI_SERV_RUNNING);
+        //mNM.cancel(NOTI_SERV_RUNNING);
+        stopForeground(true);
         if (mListener != null) {
             mListener.onStopped();
         }
@@ -199,7 +200,8 @@ public class WebService extends Service implements OnWebServListener {
         notification.setLatestEventInfo(this, getText(R.string.app_name), text, contentIntent);
         notification.flags = Notification.FLAG_ONGOING_EVENT;
 
-        mNM.notify(resId, notification);
+        //mNM.notify(resId, notification);
+        startForeground(resId, notification);
     }
 
     public boolean isRunning() {
