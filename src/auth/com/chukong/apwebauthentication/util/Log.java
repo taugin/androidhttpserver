@@ -47,6 +47,14 @@ public class Log {
         }
     }
 
+    public static void w(String tag, String message) {
+        if (DEBUG) {
+            String extraString = getMethodNameAndLineNumber();
+            tag = privateTag() ? tag : getTag();
+            android.util.Log.w(tag, extraString + message);
+        }
+    }
+
     public static void e(String tag, String message) {
         if (DEBUG) {
             String extraString = getMethodNameAndLineNumber();

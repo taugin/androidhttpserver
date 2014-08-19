@@ -1,49 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <TextView
-        android:id="@+id/wifiApssid"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:textIsSelectable="true"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/urlText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/wifiApssid"
-        android:layout_marginBottom="30dp"
-        android:textIsSelectable="true"
-        android:textSize="20sp" />
-    <ToggleButton
-        android:id="@+id/toggleBtn"
-        style="@style/BtnToggleCool"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/urlText"
-        android:textOff="@string/btn_start"
-        android:textOn="@string/btn_stop" />
+        <TextView
+            android:id="@+id/wifiApssid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:textIsSelectable="true"
+            android:textSize="20sp" />
 
-    <ToggleButton
-        android:id="@+id/toggleBtnAp"
-        style="@style/BtnToggleCool"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/toggleBtn"
-        android:textOff="@string/btn_start_ap"
-        android:textOn="@string/btn_stop_ap" />
+        <LinearLayout
+            android:id="@+id/url_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wifiApssid"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical" >
 
-    <ToggleButton
-        android:id="@+id/toggleBtnRedirect"
-        style="@style/BtnToggleCool"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/toggleBtnAp"
-        android:textOff="@string/btn_start_redirect"
-        android:textOn="@string/btn_stop_redirect" />
+            <TextView
+                android:id="@+id/urlText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:textSize="20sp" />
 
-</RelativeLayout>
+            <ImageView
+                android:id="@+id/qrCodeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/toggleBtn"
+            style="@style/BtnToggleCool"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/url_layout"
+            android:layout_marginTop="10dp"
+            android:textOff="@string/btn_start"
+            android:textOn="@string/btn_stop" />
+
+        <ToggleButton
+            android:id="@+id/toggleBtnAp"
+            style="@style/BtnToggleCool"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/toggleBtn"
+            android:layout_marginTop="10dp"
+            android:textOff="@string/btn_start_ap"
+            android:textOn="@string/btn_stop_ap" />
+
+        <ToggleButton
+            android:id="@+id/toggleBtnRedirect"
+            style="@style/BtnToggleCool"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/toggleBtnAp"
+            android:layout_marginTop="10dp"
+            android:textOff="@string/btn_start_redirect"
+            android:textOn="@string/btn_stop_redirect" />
+    </RelativeLayout>
+
+</ScrollView>

@@ -9,6 +9,9 @@ import org.join.ws.receiver.WSReceiver;
 import org.join.ws.serv.WebServer;
 import org.join.ws.service.WebService;
 import org.join.ws.util.CommonUtil;
+import org.join.zxing.Contents;
+import org.join.zxing.Intents;
+import org.join.zxing.encode.QRCodeEncoder;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,16 +20,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -36,6 +43,8 @@ import com.chukong.apwebauthentication.receiver.WifiApStateReceiver;
 import com.chukong.apwebauthentication.service.RedirectSwitch;
 import com.chukong.apwebauthentication.util.Log;
 import com.chukong.apwebauthentication.wifiap.WifiApManager;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
 
 /**
  * @brief 主活动界面
@@ -54,6 +63,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private ToggleButton toggleBtnAp;
     private ToggleButton toggleBtnRedirect;
     private TextView urlText;
+	private ImageView qrCodeView;
     private TextView wifiApText;
 
     private String ipAddr;
@@ -78,6 +88,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             switch (msg.what) {
             case W_START: {
                 setUrlText(ipAddr);
+                qrCodeView.setVisibility(View.VISIBLE);
                 /*
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) toggleBtn
                         .getLayoutParams();
@@ -89,6 +100,8 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             }
             case W_STOP: {
                 urlText.setText("");
+                qrCodeView.setImageResource(0);
+                qrCodeView.setVisibility(View.GONE);
                 /*
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) toggleBtn
                         .getLayoutParams();
@@ -145,6 +158,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtn = (ToggleButton) findViewById(R.id.toggleBtn);
         toggleBtn.setOnClickListener(this);
         urlText = (TextView) findViewById(R.id.urlText);
+		qrCodeView = (ImageView) findViewById(R.id.qrCodeView);
         wifiApText = (TextView) findViewById(R.id.wifiApssid);
 
         toggleBtnAp = (ToggleButton) findViewById(R.id.toggleBtnAp);
@@ -168,6 +182,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private void setUrlText(String ipAddr) {
         String url = "http://" + ipAddr + ":" + Config.PORT + "/";
         urlText.setText(url);
+        generateQRCode(url);
     }
 
     @Override
@@ -384,8 +399,8 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             WifiConfiguration config = WifiApManager.getInstance(this).createWifiInfo(SSID, pass, auth);
             Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++ssid = " + SSID + " , preSharedKey = " + pass);
             // 还原原来的SSID会导致重启
-            WifiApManager.getInstance(this).setWifiApConfiguration(config);
             WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
+            WifiApManager.getInstance(this).setWifiApConfiguration(config);
         }
     }
 
@@ -442,6 +457,33 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         mHandler.sendEmptyMessage(W_STOP);
     }
 
+    private void generateQRCode(String text) {
+        Intent intent = new Intent(Intents.Encode.ACTION);
+        intent.putExtra(Intents.Encode.FORMAT, BarcodeFormat.QR_CODE.toString());
+        intent.putExtra(Intents.Encode.TYPE, Contents.Type.TEXT);
+        intent.putExtra(Intents.Encode.DATA, text);
+        try {
+            int dimension = getDimension();
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, intent, dimension, false);
+            Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
+            if (bitmap == null) {
+                Log.w(TAG, "Could not encode barcode");
+            } else {
+                qrCodeView.setImageBitmap(bitmap);
+            }
+        } catch (WriterException e) {
+        }
+    }
+
+    private int getDimension() {
+        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        int dimension = width < height ? width : height;
+        dimension = dimension * 3 / 4;
+        return dimension;
+    }
     @Override
     public void onWebServerError(int code) {
         Message msg = mHandler.obtainMessage(W_ERROR);
