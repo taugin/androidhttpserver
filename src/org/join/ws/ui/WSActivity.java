@@ -394,18 +394,19 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++oldConfig.SSID = " + oldConfig.SSID + " , oldConfig.preShareKey = " + oldConfig.preSharedKey);
             editor.putString(Constants.KEY_SAVED_SSID, oldConfig.SSID);
             editor.putString(Constants.KEY_SAVED_PASS, oldConfig.preSharedKey);
-            editor.putInt(Constants.KEY_SAVED_AUTH, WifiApManager.getInstance(this).getAuth(oldConfig));
+            editor.putInt(Constants.KEY_SECURITY_TYPE, WifiApManager.getSecurityTypeIndex(oldConfig));
             editor.apply();
             String SSID = "Chukong-Share";
-            WifiConfiguration config = WifiApManager.getInstance(this).createWifiInfo(SSID, null, -1);
+            WifiConfiguration config = WifiApManager.getInstance(this).getConfig(SSID, null, WifiApManager.OPEN_INDEX);
+            Log.d(Log.TAG, "config =  " + config.SSID);
             WifiApManager.getInstance(this).setWifiApConfiguration(config);
             WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
         } else {
             String SSID = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.KEY_SAVED_SSID, null);
             String pass = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.KEY_SAVED_PASS, null);
-            int auth = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.KEY_SAVED_AUTH, -1);
-            WifiConfiguration config = WifiApManager.getInstance(this).createWifiInfo(SSID, pass, auth);
-            Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++ssid = " + SSID + " , preSharedKey = " + pass);
+            int securityType = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.KEY_SECURITY_TYPE, WifiApManager.OPEN_INDEX);
+            WifiConfiguration config = WifiApManager.getInstance(this).getConfig(SSID, pass, securityType);
+            Log.d(Log.TAG, "+++++++++++++++++++++++++++++++++++ssid = " + SSID + " , preSharedKey = " + pass + ", securityType = " + securityType);
             // 还原原来的SSID会导致重启
             WifiApManager.getInstance(this).setSoftApEnabled(null, enabled);
             WifiApManager.getInstance(this).setWifiApConfiguration(config);

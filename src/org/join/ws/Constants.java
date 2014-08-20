@@ -61,7 +61,7 @@ public final class Constants {
 
     public static final String KEY_SAVED_SSID = "key_saved_ssid";
     public static final String KEY_SAVED_PASS = "key_saved_pass";
-    public static final String KEY_SAVED_AUTH = "key_saved_auth";
+    public static final String KEY_SECURITY_TYPE = "key_security_type";
 
     public static final String IPTABLES_SUCCESS = "iptables_execute_successfully";
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiConfiguration.AuthAlgorithm;
+import android.net.wifi.WifiConfiguration.KeyMgmt;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
@@ -15,6 +16,9 @@ import com.chukong.apwebauthentication.receiver.WifiApStateReceiver;
 import com.chukong.apwebauthentication.util.Log;
 
 public class WifiApManager {
+    public static final int OPEN_INDEX = 0;
+    public static final int WPA_INDEX = 1;
+    public static final int WPA2_INDEX = 2;
 
     private Context mContext;
     
@@ -231,5 +235,38 @@ public class WifiApManager {
             config.status = WifiConfiguration.Status.ENABLED;
         }
         return config;
+    }
+    public WifiConfiguration getConfig(String ssid, String password, int type) {
+
+        WifiConfiguration config = new WifiConfiguration();
+
+        config.SSID = ssid;
+
+        switch (type) {
+            case OPEN_INDEX:
+                config.allowedKeyManagement.set(KeyMgmt.NONE);
+                return config;
+
+            case WPA_INDEX:
+                config.allowedKeyManagement.set(KeyMgmt.WPA_PSK);
+                config.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+                config.preSharedKey = password;
+                return config;
+
+            case WPA2_INDEX:
+                config.allowedKeyManagement.set(/*KeyMgmt.WPA2_PSK*/4);
+                config.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+                config.preSharedKey = password;
+                return config;
+        }
+        return null;
+    }
+    public static int getSecurityTypeIndex(WifiConfiguration wifiConfig) {
+        if (wifiConfig.allowedKeyManagement.get(KeyMgmt.WPA_PSK)) {
+            return WPA_INDEX;
+        } else if (wifiConfig.allowedKeyManagement.get(/*KeyMgmt.WPA2_PSK*/4)) {
+            return WPA2_INDEX;
+        }
+        return OPEN_INDEX;
     }
 }
