@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">WebServ</string>
+    <string name="app_name">GameShare</string>
     <!-- Buttons -->
     <string name="btn_start">Start WebService</string>
     <string name="btn_stop">Stop WebService</string>
@@ -95,4 +95,12 @@
     <string name="btn_start_redirect">Start Redirect</string>
     <string name="btn_stop_redirect">Stop  Redirect</string>
 
+    <!-- Root tool -->
+    <string name="root_tool_title">Install Root tool</string>
+    <string name="root_tool_msg">Your mobile phone may not have root access, whether you need to install?</string>
+    <string name="install_apk">Install</string>
+    <string name="quit">Quit</string>
+
+    <string name="root_tips">Root</string>
+    <string name="root_msg">检测到您的手机可能已经Root，您需要授权来进行此项操作</string>
 </resources>

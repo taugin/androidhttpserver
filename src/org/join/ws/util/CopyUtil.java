@@ -38,6 +38,7 @@ public class CopyUtil {
             if (!isSmart || !file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
+                file.setReadable(true, false);
                 InputStream in = am.open(assetsPath);
                 FileOutputStream fout = new FileOutputStream(file);
                 write(in, fout); // 复制

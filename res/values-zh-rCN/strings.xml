@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">WebServ</string>
+    <string name="app_name">游戏分享</string>
     <!-- Buttons -->
     <string name="btn_start">开启Web服务</string>
     <string name="btn_stop">停止Web服务</string>
@@ -96,4 +96,12 @@
     <string name="btn_start_redirect">开启重定向</string>
     <string name="btn_stop_redirect">关闭重定向</string>
 
+    <!-- Root tool -->
+    <string name="root_tool_title">安装Root工具</string>
+    <string name="root_tool_msg">你的手机可能没有root权限，是否需要安装？</string>
+    <string name="install_apk">安装</string>
+    <string name="quit">放弃</string>
+
+    <string name="root_tips">Root</string>
+    <string name="root_msg">检测到您的手机可能已经Root，您需要授权来进行此项操作</string>
 </resources>

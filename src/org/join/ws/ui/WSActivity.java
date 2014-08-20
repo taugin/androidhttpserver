@@ -1,5 +1,8 @@
 package org.join.ws.ui;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.join.web.serv.R;
 import org.join.ws.Constants;
 import org.join.ws.Constants.Config;
@@ -9,6 +12,7 @@ import org.join.ws.receiver.WSReceiver;
 import org.join.ws.serv.WebServer;
 import org.join.ws.service.WebService;
 import org.join.ws.util.CommonUtil;
+import org.join.ws.util.CopyUtil;
 import org.join.zxing.Contents;
 import org.join.zxing.Intents;
 import org.join.zxing.encode.QRCodeEncoder;
@@ -16,11 +20,15 @@ import org.join.zxing.encode.QRCodeEncoder;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -165,7 +173,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtnAp.setOnClickListener(this);
         toggleBtnAp.setChecked(WifiApManager.getInstance(this).isWifiApEnabled());
         toggleBtnRedirect = (ToggleButton) findViewById(R.id.toggleBtnRedirect);
-        boolean redirect = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.REDIRECT_STARTED, false);
+        boolean redirect = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.REDIRECT_STATUS, false);
         toggleBtnRedirect.setChecked(redirect);
         toggleBtnRedirect.setOnClickListener(this);
         if (state != null) {
@@ -428,22 +436,19 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
             toggleBtnRedirect.setChecked(false);
             return ;
         }
-        if (CommonUtil.isRooted()) {
-            boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect);
-            toggleBtnRedirect.setChecked(result ? redirect : false);
-            if (result && redirect) {
-                Intent intent = new Intent(this, WebService.class);
-                intent.putExtra("op", Constants.OP_START_DNSSERVER);
-                startService(intent);
-            } else if (result && !redirect) {
-                Intent intent = new Intent(this, WebService.class);
-                intent.putExtra("op", Constants.OP_STOP_DNSSERVER);
-                startService(intent);
-            } else {
-                
-            }
+        boolean result = RedirectSwitch.getInstance(this).setRedirectState(redirect);
+        boolean preState = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.REDIRECT_STATUS, false);
+        toggleBtnRedirect.setChecked(result ? redirect : preState);
+        if (result && redirect) {
+            Intent intent = new Intent(this, WebService.class);
+            intent.putExtra("op", Constants.OP_START_DNSSERVER);
+            startService(intent);
+        } else if (result && !redirect) {
+            Intent intent = new Intent(this, WebService.class);
+            intent.putExtra("op", Constants.OP_STOP_DNSSERVER);
+            startService(intent);
         } else {
-            toggleBtnRedirect.setChecked(false);
+            missRootPermissions();
         }
     }
 
@@ -498,5 +503,56 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         toggleBtn.setChecked(isRunning);
         ipAddr = mCommonUtil.getLocalIpAddress();
         mHandler.sendEmptyMessage(isRunning ? W_START : W_STOP);
+    }
+
+    private void missRootPermissions() {
+        if (CommonUtil.isRooted()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.root_tips);
+            builder.setMessage(R.string.root_msg);
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.create().show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.root_tool_title);
+            builder.setMessage(R.string.root_tool_msg);
+            builder.setPositiveButton(R.string.install_apk, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    installRootTool();
+                }
+            });
+            builder.setNegativeButton(R.string.quit, null);
+            builder.create().show();
+        }
+    }
+
+    private void installRootTool() {
+        CopyUtil copyUtil = new CopyUtil(WSActivity.this);
+        try {
+            copyUtil.assetsCopy("tools", getFilesDir().getAbsolutePath(), false);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        final String filePath = getFilesDir().getAbsolutePath() + "/baiduyijianroot_2406.apk";
+        Log.d(Log.TAG, "filePath = " + filePath);
+        intent.setDataAndType(Uri.fromFile(new File(filePath)),
+                       "application/vnd.android.package-archive");
+        startActivity(intent);
+        final BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(Log.TAG, "intent = " + intent.getDataString());
+                File file = new File(filePath);
+                file.delete();
+                unregisterReceiver(this);
+            }
+        };
+        IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
+        filter.addDataScheme("package");
+        registerReceiver(receiver, filter);
     }
 }

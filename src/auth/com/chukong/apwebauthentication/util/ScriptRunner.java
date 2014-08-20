@@ -3,6 +3,8 @@ package com.chukong.apwebauthentication.util;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import org.join.ws.Constants;
+
 /** 
  * Internal thread used to execute scripts as root. 
  */  
@@ -42,6 +44,9 @@ public class ScriptRunner extends Thread {
                 out.write("\n");
             out.flush();
             // Terminate the "su" process
+            String successFlag = "echo " + Constants.IPTABLES_SUCCESS + "\n";
+            out.write(successFlag);
+            out.flush();
             out.write("exit\n");
             out.flush();
             final char buf[] = new char[1024];
