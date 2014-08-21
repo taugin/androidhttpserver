@@ -19,3 +19,25 @@
 #   public *;
 #}
 -keepclassmembers class org.join.ws.serv.req.obj.** { *; }
+-dontwarn sun.net.spi.nameservice.NameServiceDescriptor
+-dontwarn javax.swing.filechooser.FileFilter
+-dontwarn sun.net.spi.nameservice.NameService
+-dontwarn sun.net.spi.nameservice.NameServiceDescriptor
+-dontwarn org.apache.log4j.Logger
+-dontwarn org.apache.log4j.xml.DOMConfigurator
+-dontwarn java.awt.image.BufferedImage
+-dontwarn java.awt.geom.AffineTransform
+-dontwarn java.awt.image.BufferedImage
+-dontwarn java.awt.geom.AffineTransform
+-dontwarn java.awt.image.BufferedImage
+-dontwarn javax.swing.filechooser.FileFilter
+-dontwarn java.rmi.Remote
+-dontwarn java.rmi.server.RMISocketFactory
+-dontwarn java.rmi.RemoteException
+-dontwarn java.rmi.*.*
+-dontwarn java.rmi.registry.**
+-dontwarn java.rmi.server.**
+-dontwarn java.awt.**
+-dontwarn javax.imageio.**
+-dontwarn javax.naming.**
+-dontwarn java.rmi.**
