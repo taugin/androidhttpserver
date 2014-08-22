@@ -42,7 +42,7 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/set_more_t" >
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="more_gzip"
             android:summary="@string/set_more_gzip_s"
             android:title="@string/set_more_gzip_t"

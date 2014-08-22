@@ -37,12 +37,12 @@ public final class Constants {
         public static final int THRESHOLD_UPLOAD = 1024 * 1024; // 1MB
 
         /** 是否使用GZip */
-        public static boolean USE_GZIP = true;
+        public static boolean USE_GZIP = false;
         /** GZip扩展名 */
         public static final String EXT_GZIP = ".gz"; // used in cache
 
         /** 是否使用文件缓存 */
-        public static boolean USE_FILE_CACHE = true;
+        public static boolean USE_FILE_CACHE = false;
         /** 文件缓存目录 */
         public static final String FILE_CACHE_DIR = APP_DIR + "cache/";
 
