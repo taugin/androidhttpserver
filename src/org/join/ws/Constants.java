@@ -46,7 +46,7 @@ public final class Constants {
         /** 文件缓存目录 */
         public static final String FILE_CACHE_DIR = APP_DIR + "cache/";
 
-        public static boolean SHOW_INSTALLED_APP = false;
+        public static boolean SHOW_INSTALLED_APP = true;
 
         /** 缓冲字节长度=1024*4B */
         public static final int BUFFER_LENGTH = 4096;

@@ -272,7 +272,9 @@ public class HttpFBHandler implements HttpRequestHandler {
                 File appFiles[] = getFileFromDataApp();
                 sort(appFiles);
                 for (File file : appFiles) {
-                    fileRows.add(buildFileRow(file, true));
+                    if (file != null && file.length() >= 1024 * 1024) {
+                        fileRows.add(buildFileRow(file, true));
+                    }
                 }
             }
             File thisFile = getThisAppFile();

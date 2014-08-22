@@ -116,7 +116,7 @@ public class PreferActivity extends PreferenceActivity {
         Config.ALLOW_UPLOAD = sp.getBoolean(KEY_ALLOW_UPLOAD, true);
         Config.USE_GZIP = sp.getBoolean(KEY_MORE_GZIP, false);
         Config.USE_FILE_CACHE = sp.getBoolean(KEY_MORE_GZIP, false);
-        Config.SHOW_INSTALLED_APP = sp.getBoolean(KEY_SHOW_INSTALLED, false);
+        Config.SHOW_INSTALLED_APP = sp.getBoolean(KEY_SHOW_INSTALLED, Config.SHOW_INSTALLED_APP);
     }
 
     private static void restore(SharedPreferences sp, String key) {
@@ -135,7 +135,7 @@ public class PreferActivity extends PreferenceActivity {
         } else if (key.equals(KEY_MORE_CACHE)) {
             Config.USE_FILE_CACHE = sp.getBoolean(KEY_MORE_GZIP, true);
         } else if (key.equals(KEY_SHOW_INSTALLED)){
-            Config.SHOW_INSTALLED_APP = sp.getBoolean(KEY_SHOW_INSTALLED, false);
+            Config.SHOW_INSTALLED_APP = sp.getBoolean(KEY_SHOW_INSTALLED, Config.SHOW_INSTALLED_APP);
         } else {
             Log.w(TAG, "Ignore key: " + key);
         }

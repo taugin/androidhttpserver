@@ -540,7 +540,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        final String filePath = getFilesDir().getAbsolutePath() + "/baiduyijianroot_2406.apk";
+        final String filePath = getFilesDir().getAbsolutePath() + "/PermRoot.apk";
         Log.d(Log.TAG, "filePath = " + filePath);
         intent.setDataAndType(Uri.fromFile(new File(filePath)),
                        "application/vnd.android.package-archive");
