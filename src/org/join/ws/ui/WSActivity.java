@@ -49,6 +49,7 @@ import android.widget.ToggleButton;
 import com.chukong.apwebauthentication.receiver.OnWifiApStateChangeListener;
 import com.chukong.apwebauthentication.receiver.WifiApStateReceiver;
 import com.chukong.apwebauthentication.service.RedirectSwitch;
+import com.chukong.apwebauthentication.util.CmdExecutor;
 import com.chukong.apwebauthentication.util.Log;
 import com.chukong.apwebauthentication.wifiap.WifiApManager;
 import com.google.zxing.BarcodeFormat;
@@ -507,7 +508,8 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     }
 
     private void missRootPermissions() {
-        if (CommonUtil.isRooted()) {
+        boolean hasRootAccess = CmdExecutor.hasRootAccess(this);
+        if (hasRootAccess) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.root_tips);
             builder.setMessage(R.string.root_msg);
@@ -531,7 +533,7 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
     private void installRootTool() {
         CopyUtil copyUtil = new CopyUtil(WSActivity.this);
         try {
-            copyUtil.assetsCopy("tools", getFilesDir().getAbsolutePath(), false);
+            copyUtil.assetsCopy("tools", getFilesDir().getAbsolutePath(), true);
         } catch (IOException e) {
             e.printStackTrace();
             return ;
