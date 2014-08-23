@@ -66,11 +66,11 @@
             android:title="@string/set_show_installed_apps_t"
             android:widgetLayout="@layout/prefer_widget_checkbox" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/set_about_t" >
+    <!--PreferenceCategory android:title="@string/set_about_t" >
         <Preference
             android:key="about_more"
             android:summary="@string/set_about_more_s"
             android:title="@string/set_about_more_t" />
-    </PreferenceCategory>
+    </PreferenceCategory-->
 
 </PreferenceScreen>

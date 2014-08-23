@@ -103,4 +103,5 @@
 
     <string name="root_tips">Root</string>
     <string name="root_msg">检测到您的手机可能已经Root，您需要授权来进行此项操作</string>
+    <string name="menu_show_coninfos">ConnInfo</string>
 </resources>

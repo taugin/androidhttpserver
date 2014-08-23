@@ -232,6 +232,9 @@ public class WSActivity extends WebServActivity implements OnClickListener, OnWs
         case R.id.action_preferences:
             toPreferActivity();
             break;
+        case R.id.action_show_coninfos:
+            //showConnInfoDlg();
+            break;
         }
         return super.onMenuItemSelected(featureId, item);
     }

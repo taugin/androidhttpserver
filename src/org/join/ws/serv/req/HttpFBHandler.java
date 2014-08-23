@@ -9,6 +9,8 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -282,6 +284,7 @@ public class HttpFBHandler implements HttpRequestHandler {
                 Log.d(Log.TAG, "thisFile = " + thisFile);
                 fileRows.add(0, buildFileRow(thisFile, true));
             }
+            sortList(fileRows);
             return fileRows;
         }
         return null;
@@ -292,11 +295,13 @@ public class HttpFBHandler implements HttpRequestHandler {
     private FileRow buildFileRow(File f, boolean installed) {
         boolean isDir = f.isDirectory();
         String clazz, name, link, size, icon = null, desc = null;
+        long numSize = 0;
         if (isDir) {
             clazz = "icon dir";
             name = f.getName() + "/";
             link = f.getPath() + "/";
             size = "";
+            numSize = 0;
         } else {
             clazz = "icon file";
             name = f.getName();
@@ -309,10 +314,11 @@ public class HttpFBHandler implements HttpRequestHandler {
                 icon = getApkIcon(link);
             }
             size = mCommonUtil.readableFileSize(f.length());
+            numSize = f.length();
         }
         //desc = installed ? "Installed" : "UnInstalled";
         desc = link;
-        FileRow row = new FileRow(clazz, name, link, size, icon, desc);
+        FileRow row = new FileRow(clazz, name, link, size, icon, desc, numSize);
         row.time = sdf.format(new Date(f.lastModified()));
         if (f.canRead()) {
             row.can_browse = true;
@@ -395,6 +401,15 @@ public class HttpFBHandler implements HttpRequestHandler {
                 } else {
                     return f1.toString().compareToIgnoreCase(f2.toString());
                 }
+            }
+        });
+    }
+    // According to file size
+    private void sortList(ArrayList<FileRow> fileRows) {
+        Collections.sort(fileRows, new Comparator<FileRow>() {
+            @Override
+            public int compare(FileRow lhs, FileRow rhs) {
+                return lhs.numSize < rhs.numSize ? 1 : -1;
             }
         });
     }

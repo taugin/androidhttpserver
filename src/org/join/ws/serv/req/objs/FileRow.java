@@ -14,6 +14,7 @@ public class FileRow {
     public String time;
     public String icon;
     public String desc;
+    public long numSize;
 
     public boolean can_browse = false;
     public boolean can_download = false;
@@ -23,13 +24,14 @@ public class FileRow {
     public FileRow() {
     }
 
-    public FileRow(String clazz, String name, String link, String size, String icon, String desc) {
+    public FileRow(String clazz, String name, String link, String size, String icon, String desc, long numSize) {
         this.clazz = clazz;
         this.name = name;
         this.link = link;
         this.size = size;
         this.icon = icon;
         this.desc = desc;
+        this.numSize = numSize;
     }
 
 }
